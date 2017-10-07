@@ -12,4 +12,21 @@
 
 <style>
   /* CSS */
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  body {
+    font: normal 1em/1.5em 'microsoft Yahei', Verdana, Arial, Helvetica, sans-serif;
+  }
+
+  #app {
+    width: 100%;
+    height: 100%;
+  }
 </style>
