@@ -4,7 +4,9 @@
     "test": {
       "presets": [
         ["env", {
-          "targets": { "node": 7 }
+          "targets": {
+            "node": 7
+          }
         }],
         "stage-0"
       ],
@@ -13,7 +15,9 @@
     "main": {
       "presets": [
         ["env", {
-          "targets": { "node": 7 }
+          "targets": {
+            "node": 7
+          }
         }],
         "stage-0"
       ]
@@ -25,6 +29,14 @@
         }],
         "stage-0"
       ]
+      // "plugins": [
+      //   [
+      //     "component", [{
+      //       "libraryName": "element-ui",
+      //       "styleLibraryName": "theme-default"
+      //     }]
+      //   ]
+      // ]
     },
     "web": {
       "presets": [
@@ -35,5 +47,7 @@
       ]
     }
   },
-  "plugins": ["transform-runtime"]
+  "plugins": [
+    "transform-runtime"
+  ]
 }

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
 import ElementUI from 'element-ui'
-import 'normalize.css'
 import moment from 'moment'
 
 import 'element-ui/lib/theme-default/index.css'

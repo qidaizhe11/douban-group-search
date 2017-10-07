@@ -13,6 +13,8 @@
 <style>
   /* CSS */
 
+  @import "~normalize.css";
+
   html,
   body {
     margin: 0;
