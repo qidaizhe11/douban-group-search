@@ -1,0 +1,9 @@
+{
+  "css": {
+    "indent_size": 2,
+    "preserve_newlines": true
+  },
+  "js": {
+    "indent_size": 2
+  }
+}

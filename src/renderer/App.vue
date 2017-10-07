@@ -14,6 +14,7 @@
   /* CSS */
 
   @import "~normalize.css";
+  @import "./style/theme/index.css";
 
   html,
   body {

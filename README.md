@@ -8,7 +8,10 @@
 # install dependencies
 npm install
 
+npm i element-theme -g
+
 # serve with hot reload at localhost:9080
+npm run theme
 npm run dev
 
 # build electron application for production
