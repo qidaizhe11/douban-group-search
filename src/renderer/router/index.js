@@ -15,6 +15,11 @@ export default new Router({
     component: require('views/Index').default
   },
   {
+    path: '/result',
+    name: 'result',
+    component: require('views/Result').default
+  },
+  {
     path: '/login',
     name: 'login',
     component: require('views/Login').default

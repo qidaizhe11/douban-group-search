@@ -15,5 +15,8 @@ export const doubanApi = {
     return DOUBAN_API_ROOT + `/api/v2/user/${userId}/following`
   },
   getHomeTimelineUrl: DOUBAN_API_ROOT + '/api/v2/status/home_timeline',
-  getHasNewRecsUrl: DOUBAN_API_ROOT + '/api/v2/user/recommended_users/has_new_recs'
+  getHasNewRecsUrl: DOUBAN_API_ROOT + '/api/v2/user/recommended_users/has_new_recs',
+  getGroupMembers(groupId) {
+    return DOUBAN_API_ROOT + `/api/v2/group/${groupId}/members`
+  }
 }

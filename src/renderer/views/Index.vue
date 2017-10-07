@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="button-container">
-        <el-button class="search-button" type="primary">
+        <el-button class="search-button" type="primary" @click="onSearch">
           搜索
         </el-button>
       </div>
@@ -35,6 +35,11 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
+
+  import router from 'router'
+  import { INIT_USRE_INFO_FROM_STORAGE } from 'store/mutation-types'
+
   export default {
     data() {
       return {
@@ -42,6 +47,25 @@
         title: '',
         sex: 'all',
         city: ''
+      }
+    },
+    computed: {
+      ...mapState({
+        user: state => state.user
+      })
+    },
+    mounted() {
+      const that = this
+      this.$store.dispatch(INIT_USRE_INFO_FROM_STORAGE)
+        .then(() => {
+          if (!that.user.isLogined) {
+            router.push('/login')
+          }
+        })
+    },
+    methods: {
+      onSearch() {
+        router.push('/result')
       }
     }
   }

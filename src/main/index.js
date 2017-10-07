@@ -1,6 +1,9 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import {
+  app,
+  BrowserWindow
+} from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -15,17 +18,22 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
-function createWindow () {
+function createWindow() {
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    webPreferences: {
+      webSecurity: false
+    }
   })
 
-  mainWindow.loadURL(winURL)
+  mainWindow.loadURL(winURL, {
+    userAgent: 'api-client/1 com.douban.frodo/4.18.0(99) Android/24 gemini Xiaomi MI 5  rom/miui6  network/wifi'
+  })
 
   mainWindow.on('closed', () => {
     mainWindow = null

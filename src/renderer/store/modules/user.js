@@ -19,6 +19,9 @@ const user = {
       console.log('action, SET_USER_INFO, user:', user)
       state.id = user.id
       state.accessToken = user.accessToken
+      if (user.accessToken) {
+        state.isLogined = true
+      }
     },
     [types.LOGIN_SUCCESS](state, data) {
       state.isLogined = true
@@ -74,16 +77,20 @@ const user = {
       commit,
       state
     }) {
-      const userId = localStorage.getItem('userId')
-      const accessToken = localStorage.getItem('accessToken')
-      const refreshToken = localStorage.getItem('refreshToken')
-      const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+      console.log('store/user, init_user_info_from_storage.')
+      const userId = localStorage.getItem('userId') || ''
+      const accessToken = localStorage.getItem('accessToken') || ''
+      const refreshToken = localStorage.getItem('refreshToken') || ''
+      const tokenExpiredTime = localStorage.getItem('tokenExpiredTime') || ''
 
-      commit(types.SET_USER_INFO, {
-        id: userId,
-        accessToken,
-        refreshToken,
-        tokenExpiredTime: new Date(tokenExpiredTime)
+      return new Promise((resolve, reject) => {
+        commit(types.SET_USER_INFO, {
+          id: userId,
+          accessToken,
+          refreshToken,
+          tokenExpiredTime: new Date(tokenExpiredTime)
+        })
+        resolve()
       })
     }
   }
