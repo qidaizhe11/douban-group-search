@@ -10,13 +10,18 @@ export default new Router({
     component: require('@/components/LandingPage').default
   },
   {
+    path: '/',
+    name: 'index',
+    component: require('views/Index').default
+  },
+  {
     path: '/login',
     name: 'login',
     component: require('views/Login').default
   },
   {
     path: '*',
-    redirect: '/login'
+    redirect: '/'
   }
   ]
 })
