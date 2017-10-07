@@ -20,6 +20,8 @@
 </template>
 
 <script>
+  import { FETCH_POST_LOGIN } from 'store/mutation-types'
+
   export default {
     data() {
       return {
@@ -39,7 +41,11 @@
     },
     methods: {
       login() {
-
+        console.log('Login, onSubmit, this.form:', this.form)
+        this.$store.dispatch(FETCH_POST_LOGIN, {
+          username: this.ruleForm.account,
+          password: this.ruleForm.password
+        })
       }
     }
   }
