@@ -29,7 +29,7 @@ service.interceptors.response.use(
       return Promise.reject(new Error(res.localized_message || '未知错误'))
     } else {
       console.log('fetch', response.config.url, 'success, got response:', res)
-      return res.data
+      return res
     }
   },
   error => {

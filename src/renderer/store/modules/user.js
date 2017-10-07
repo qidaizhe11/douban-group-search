@@ -1,8 +1,7 @@
-import Qs from 'qs'
 import {
-  doubanApi
-} from 'config/index'
-// import router from 'router'
+  fetchLogin
+} from 'api'
+import router from 'router'
 import * as types from 'store/mutation-types'
 
 const user = {
@@ -39,7 +38,7 @@ const user = {
       localStorage.setItem('tokenExpiredTime', state.tokenExpiredTime.toISOString())
       localStorage.setItem('refreshToken', state.refreshToken)
 
-      // router.push('/')
+      router.push('/')
     }
   },
   actions: {
@@ -47,30 +46,11 @@ const user = {
       commit,
       state
     }, data) {
-      const postData = Qs.stringify({
-        client_id: '0dad551ec0f84ed02907ff5c42e8ec70',
-        client_secret: '9e8bb54dc3288cdf',
-        grant_type: 'password',
-        username: data.username,
+      fetchLogin({
+        account: data.account,
         password: data.password
-      })
-      fetch(doubanApi.loginUrl, {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: postData
-      }).then(response => {
-        console.log('fetch_login, response:', response)
-
-        if (!response.ok) {
-          console.log('!!!fetch_login, response error! response:', response)
-        }
-
-        response.json().then(data => {
-          console.log('fetch_login, got data:', data)
-          commit(types.LOGIN_SUCCESS, data)
-        })
+      }).then(data => {
+        commit(types.LOGIN_SUCCESS, data)
       })
     },
     [types.INIT_USRE_INFO_FROM_STORAGE]({

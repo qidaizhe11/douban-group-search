@@ -1,3 +1,5 @@
+import qs from 'qs'
+
 import fetch from '../utils/fetch'
 
 const commonParams = {
@@ -22,5 +24,26 @@ export function fetchGetGroupMembers(params) {
       count: 30,
       ...commonParams
     }
+  })
+}
+
+export function fetchLogin(params) {
+  if (!params.account || !params.password) {
+    return
+  }
+
+  return fetch({
+    url: '/service/auth2/token',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data: qs.stringify({
+      client_id: '0dad551ec0f84ed02907ff5c42e8ec70',
+      client_secret: '9e8bb54dc3288cdf',
+      grant_type: 'password',
+      username: params.account,
+      password: params.password
+    })
   })
 }

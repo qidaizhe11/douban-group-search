@@ -3,7 +3,7 @@
     <el-form class="login-form" :rules="rules" ref="ruleForm" :model="ruleForm" label-position="top"
       label-width="100px">
       <el-form-item label="账号" prop="account">
-        <el-input placeholder="请输入豆瓣账号" icon="my-phone" v-model="ruleForm.account" :maxlength="11"></el-input>
+        <el-input placeholder="请输入豆瓣账号（手机号/邮箱）" icon="my-phone" v-model="ruleForm.account"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input placeholder="请输入密码" icon="my-password" v-model="ruleForm.password" type="password"
@@ -41,10 +41,15 @@
     },
     methods: {
       login() {
-        console.log('Login, onSubmit, this.form:', this.form)
-        this.$store.dispatch(FETCH_POST_LOGIN, {
-          username: this.ruleForm.account,
-          password: this.ruleForm.password
+        this.$refs.ruleForm.validate((valid) => {
+          if (!valid) {
+            return
+          }
+
+          this.$store.dispatch(FETCH_POST_LOGIN, {
+            account: this.ruleForm.account,
+            password: this.ruleForm.password
+          })
         })
       }
     }
