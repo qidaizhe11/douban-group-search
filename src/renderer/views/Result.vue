@@ -16,10 +16,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import axios from 'axios'
-  import {
-    doubanApi
-  } from 'config/index'
+  import { fetchGetGroupMembers } from 'api'
 
   export default {
     data() {
@@ -40,36 +37,17 @@
       })
     },
     mounted() {
-      this.fetchGetGroupUsers()
+      this.getGroupUsers()
     },
     methods: {
-      fetchGetGroupUsers() {
-        const token = this.user.accessToken
-        axios({
-          url: doubanApi.getGroupMembers(this.params.id),
-          method: 'get',
-          headers: {
-            'Authorization': 'Bearer ' + token
-          },
-          params: {
-            start: 0,
-            count: 30,
-            apikey: '0dad551ec0f84ed02907ff5c42e8ec70',
-            os_rom: 'miui6',
-            channel: 'Xiaomi_Market',
-            udid: '8a2a02080cd222dfd017d22833736a7ee3a9bae5'
-          }
-        }).then(response => {
-          console.log('fetchGetGroupUsers, response:', response)
+      getGroupUsers() {
+        const accessToken = this.user.accessToken
 
-          if (!response.ok) {
-            console.log('!!!fetchGetGroupUsers, response error! response:', response)
-          }
-
-          response.json().then(data => {
-            console.log('fetchGetGroupUsers, got data:', data)
-            // commit(types.LOGIN_SUCCESS, data)
-          })
+        fetchGetGroupMembers({
+          accessToken,
+          groupId: this.params.id
+        }).then(data => {
+          console.log('fetchGetGroupUsers, got data:', data)
         })
       }
     }

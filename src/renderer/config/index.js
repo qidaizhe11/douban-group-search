@@ -1,4 +1,4 @@
-const DOUBAN_API_ROOT = 'https://frodo.douban.com'
+export const DOUBAN_API_ROOT = 'https://frodo.douban.com'
 
 export const doubanApi = {
   loginUrl: DOUBAN_API_ROOT + '/service/auth2/token',
