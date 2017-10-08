@@ -27,6 +27,56 @@ export function fetchGetGroupMembers(params) {
   })
 }
 
+export function fetchGetUserInfo(params) {
+  if (!params.userId) {
+    return
+  }
+  return fetch({
+    url: `/api/v2/user/${params.userId}/`,
+    method: 'get',
+    headers: {
+      'Authorization': 'Bearer ' + params.accessToken
+    },
+    params: {
+      ...commonParams
+    }
+  })
+}
+
+export function fetchGetUserLifeStreamTimeSlices(params) {
+  if (!params.userId) {
+    return
+  }
+  return fetch({
+    url: `/api/v2/user/${params.userId}/lifestream/timeslices`,
+    method: 'get',
+    headers: {
+      'Authorization': 'Bearer ' + params.accessToken
+    },
+    params: {
+      ...commonParams
+    }
+  })
+}
+
+export function fetchGetUserLifeStream(params) {
+  if (!params.userId) {
+    return
+  }
+  return fetch({
+    url: `/api/v2/user/${params.userId}/lifestream`,
+    method: 'get',
+    headers: {
+      'Authorization': 'Bearer ' + params.accessToken
+    },
+    params: {
+      count: 20,
+      slice: params.slice,
+      ...commonParams
+    }
+  })
+}
+
 export function fetchLogin(params) {
   if (!params.account || !params.password) {
     return

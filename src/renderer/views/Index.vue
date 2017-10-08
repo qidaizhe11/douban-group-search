@@ -3,7 +3,7 @@
     <div class="content-container">
       <div class="title-container">
         <el-input placeholder="请输入小组网址" v-model="title">
-          <el-select slot="prepend" class="title-type-select" value="group" placeholder="请选择">
+          <el-select slot="prepend" class="title-type-select" v-model="type" placeholder="请选择">
             <el-option label="小组" value="group"></el-option>
           </el-select>
         </el-input>
