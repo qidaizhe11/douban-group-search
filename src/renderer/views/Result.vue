@@ -63,21 +63,17 @@
         user: state => state.user
       })
     },
-    mounted() {
-      // this.getGroupUsers()
+    async mounted() {
       const that = this
-      this.$store.dispatch(INIT_USRE_INFO_FROM_STORAGE)
-        .then(() => {
-          if (!that.user.isLogined) {
-            router.push('/login')
-            return
-          }
-          this.getGroupUsersFilterByCity()
-            .then(userList => {
-              this.addUserIdOfUserList(userList)
-              this.getUserDetailOfUserList(userList)
-            })
-        })
+      await this.$store.dispatch(INIT_USRE_INFO_FROM_STORAGE)
+
+      if (!that.user.isLogined) {
+        router.push('/login')
+        return
+      }
+      const userList = await this.getGroupUsersFilterByCity()
+      this.addUserIdOfUserList(userList)
+      this.getUserDetailOfUserList(userList)
     },
     methods: {
       onReturnClick() {
@@ -165,34 +161,34 @@
           }, 300 * i)
         })
       },
-      getUserDetail(user) {
+      async getUserDetail(user) {
         const that = this
         const accessToken = this.user.accessToken
 
-        fetchGetUserLifeStreamTimeSlices({
+        let data = await fetchGetUserLifeStreamTimeSlices({
           accessToken,
           userId: user.id
-        }).then(data => {
-          if (data && data.timeslices && data.timeslices.length > 0) {
-            const slice = data.timeslices[0].slice
-            if (slice) {
-              fetchGetUserLifeStream({
-                accessToken,
-                userId: user.id,
-                slice
-              }).then(data => {
-                console.log('fetchGetUserLifeStream, got data:', data)
-                if (data && data.items && data.items.length > 0) {
-                  const date = new Date(data.items[0].time)
-                  user.latestStreamTime = date
-                  user.latestStreamTimeShow = date.toISOString().slice(0, 10)
-                }
-
-                that.tableData.push(user)
-              })
-            }
-          }
         })
+
+        if (data && data.timeslices && data.timeslices.length > 0) {
+          const slice = data.timeslices[0].slice
+          if (slice) {
+            data = await fetchGetUserLifeStream({
+              accessToken,
+              userId: user.id,
+              slice
+            })
+
+            console.log('fetchGetUserLifeStream, got data:', data)
+            if (data && data.items && data.items.length > 0) {
+              const date = new Date(data.items[0].time)
+              user.latestStreamTime = date
+              user.latestStreamTimeShow = date.toISOString().slice(0, 10)
+            }
+
+            that.tableData.push(user)
+          }
+        }
       }
     }
   }
