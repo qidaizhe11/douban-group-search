@@ -9,36 +9,17 @@
     <div class="tooltip-container">
     </div>
     <div class="table-container">
-      <el-table ref="table" :data="tableData" border>
-        <el-table-column prop="imageUrl" label="头像" width="100">
-          <template scope="scope">
-            <div class="image-container">
-              <img :src="scope.row.imageUrl"></img>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="name" label="昵称" width="200">
-        </el-table-column>
-        <el-table-column prop="gender" label="性别" width="80">
-        </el-table-column>
-        <el-table-column prop="city" label="城市" width="150">
-        </el-table-column>
-        <el-table-column prop="followingCount" label="关注" width="80">
-        </el-table-column>
-        <el-table-column prop="followersCount" label="关注者" width="80">
-        </el-table-column>
-        <el-table-column prop="joinedGroupCount" label="加入小组" width="100">
-        </el-table-column>
-        <el-table-column prop="latestStreamTimeShow" label="最近活跃时间" width="180">
-        </el-table-column>
-        <el-table-column prop="registerTimeShow" label="注册时间" width="180">
-        </el-table-column>
-        <el-table-column prop="url" label="主页" width="150">
-          <template scope="scope">
-            <el-button @click="onUserUrlClick(scope.row.url)">主页</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-table-wrapper ref="table" border stripe :data="tableData" :columns="tableColumns"
+        :pagination="tablePagination">
+        <template slot-scope="scope" slot="image-slot">
+          <div class="image-container">
+            <img :src="scope.row.imageUrl"></img>
+          </div>
+        </template>
+        <template slot-scope="scope" slot="url-slot">
+          <el-button @click="onUserUrlClick(scope.row.url)">主页</el-button>
+        </template>
+      </el-table-wrapper>
     </div>
     <div class="pagination-container">
     </div>
@@ -47,13 +28,22 @@
 
 <script>
   import { shell } from 'electron'
+  import Vue from 'vue'
   import { mapState } from 'vuex'
   import request from 'superagent'
   import cheerio from 'cheerio'
+  import ElTableWrapper from 'element-table-wrapper'
 
   import router from 'router'
   import { INIT_USRE_INFO_FROM_STORAGE } from 'store/mutation-types'
-  import { fetchGetGroupMembers, fetchGetUserInfo, fetchGetUserLifeStream, fetchGetUserLifeStreamTimeSlices } from 'api'
+  import {
+    fetchGetGroupMembers,
+    fetchGetUserInfo,
+    fetchGetUserLifeStream,
+    fetchGetUserLifeStreamTimeSlices
+  } from 'api'
+
+  Vue.use(ElTableWrapper)
 
   export default {
     data() {
@@ -65,7 +55,65 @@
           sex: 'female',
           city: '郑州'
         },
-        tableData: []
+        tableData: [],
+        tableColumns: [
+          {
+            prop: 'imageUrl',
+            label: '头像',
+            width: 100,
+            scopedSlot: 'image-slot'
+          },
+          {
+            prop: 'name',
+            label: '昵称'
+          },
+          {
+            prop: 'gender',
+            label: '性别',
+            width: 80
+          },
+          {
+            prop: 'city',
+            label: '城市',
+            width: 150
+          },
+          {
+            prop: 'followingCount',
+            label: '关注',
+            width: 80
+          },
+          {
+            prop: 'followersCount',
+            label: '关注者',
+            width: 80
+          },
+          {
+            prop: 'joinedGroupCount',
+            label: '加入小组',
+            width: 100
+          },
+          {
+            prop: 'latestStreamTimeShow',
+            label: '最近活跃时间',
+            width: 180
+          },
+          {
+            prop: 'registerTimeShow',
+            label: '注册时间',
+            width: 180
+          },
+          {
+            prop: 'url',
+            label: '主页',
+            width: 150,
+            scopedSlot: 'url-slot'
+          }
+        ],
+        tablePagination: {
+          pageSize: 20,
+          pageSizes: [10, 20, 50, 100],
+          layout: 'total, sizes, prev, pager, next'
+        }
       }
     },
     computed: {
@@ -104,12 +152,17 @@
       },
       getGroupUsersFilterByCity() {
         // const that = this
-        const url = 'https://www.douban.com/group/mini150cm/member_search?search_text=' + encodeURIComponent('郑州')
+        const url =
+          'https://www.douban.com/group/mini150cm/member_search?search_text=' +
+          encodeURIComponent('郑州')
 
         return new Promise((resolve, reject) => {
           request
             .get(url)
-            .set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36')
+            .set(
+              'User-Agent',
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
+            )
             .end((err, res) => {
               if (err) {
                 console.log('Result, request error:', err)
@@ -132,7 +185,10 @@
                 }
                 const memberCityNode = member.find('.pl').first()
                 if (memberCityNode) {
-                  user.city = memberCityNode.text().replace('(', '').replace(')', '')
+                  user.city = memberCityNode
+                    .text()
+                    .replace('(', '')
+                    .replace(')', '')
                 }
                 userList.push(user)
               })
@@ -185,7 +241,9 @@
           user.followersCount = data.followers_count
           user.joinedGroupCount = data.joined_group_count
           user.registerTime = data.reg_time
-          user.registerTimeShow = new Date(data.reg_time).toISOString().slice(0, 10)
+          user.registerTimeShow = new Date(data.reg_time)
+            .toISOString()
+            .slice(0, 10)
           user.gender = data.gender
           user.location = {
             id: data.loc.id,
