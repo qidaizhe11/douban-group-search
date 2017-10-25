@@ -17,11 +17,21 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="昵称">
+        <el-table-column prop="name" label="昵称" width="200">
+        </el-table-column>
+        <el-table-column prop="gender" label="性别" width="80">
         </el-table-column>
         <el-table-column prop="city" label="城市" width="150">
         </el-table-column>
+        <el-table-column prop="followingCount" label="关注" width="80">
+        </el-table-column>
+        <el-table-column prop="followersCount" label="关注者" width="80">
+        </el-table-column>
+        <el-table-column prop="joinedGroupCount" label="加入小组" width="100">
+        </el-table-column>
         <el-table-column prop="latestStreamTimeShow" label="最近活跃时间" width="180">
+        </el-table-column>
+        <el-table-column prop="registerTimeShow" label="注册时间" width="180">
         </el-table-column>
         <el-table-column prop="url" label="主页" width="150">
           <template scope="scope">
@@ -43,7 +53,7 @@
 
   import router from 'router'
   import { INIT_USRE_INFO_FROM_STORAGE } from 'store/mutation-types'
-  import { fetchGetGroupMembers, fetchGetUserLifeStream, fetchGetUserLifeStreamTimeSlices } from 'api'
+  import { fetchGetGroupMembers, fetchGetUserInfo, fetchGetUserLifeStream, fetchGetUserLifeStreamTimeSlices } from 'api'
 
   export default {
     data() {
@@ -165,7 +175,26 @@
         const that = this
         const accessToken = this.user.accessToken
 
-        let data = await fetchGetUserLifeStreamTimeSlices({
+        let data = await fetchGetUserInfo({
+          accessToken,
+          userId: user.id
+        })
+
+        if (data && data.id) {
+          user.followingCount = data.following_count
+          user.followersCount = data.followers_count
+          user.joinedGroupCount = data.joined_group_count
+          user.registerTime = data.reg_time
+          user.registerTimeShow = new Date(data.reg_time).toISOString().slice(0, 10)
+          user.gender = data.gender
+          user.location = {
+            id: data.loc.id,
+            name: data.loc.name,
+            uid: data.loc.uid
+          }
+        }
+
+        data = await fetchGetUserLifeStreamTimeSlices({
           accessToken,
           userId: user.id
         })
