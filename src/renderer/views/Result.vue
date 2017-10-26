@@ -46,6 +46,7 @@
     fetchGetUserLifeStream,
     fetchGetUserLifeStreamTimeSlices
   } from 'api'
+  import { SPIDER_USER_AGENT } from 'config'
 
   Vue.use(ElTableWrapper)
 
@@ -105,7 +106,10 @@
           pageSize: 20,
           pageSizes: [10, 20, 50, 100],
           layout: 'total, sizes, prev, pager, next'
-        }
+        },
+        total: 0,
+        pageSize: 0,
+        currentPage: 0
       }
     },
     computed: {
@@ -122,9 +126,19 @@
         router.push('/login')
         return
       }
-      const userList = await this.getGroupUsersFilterByCity()
-      this.addUserIdOfUserList(userList)
-      this.getUserDetailOfUserList(userList)
+
+      // const userList = await this.getGroupUsersFilterByCity()
+      // this.addUserIdOfUserList(userList)
+      // this.getUserDetailOfUserList(userList)
+
+      const url =
+        _.trimEnd(this.params.title, '/') +
+        '/member_search?search_text=' +
+        encodeURIComponent(this.params.city)
+      if (url) {
+        await this.getGroupUsersTotal(url)
+        console.log('Result, getGroupUsersTotal:', this.total)
+      }
     },
     methods: {
       onReturnClick() {
@@ -143,9 +157,42 @@
           console.log('fetchGetGroupUsers, got data:', data)
         })
       },
+      getGroupUsersTotal(url) {
+        return new Promise((resolve, reject) => {
+          request
+            .get(url)
+            .set('User-Agent', SPIDER_USER_AGENT)
+            .end((err, res) => {
+              if (err) {
+                reject()
+                return
+              }
+
+              const $ = cheerio.load(res.text)
+              const totalContents = $('#content .article .wrap h3').contents()
+              console.log('totalContents:', totalContents, typeof totalContents)
+              totalContents.map((i, node) => {
+                if (node.type === 'text' && /共\d+人/.test(node.data)) {
+                  const totalMatch = node.data.match(/共(\d+)人/)
+                  if (totalMatch.length > 1) {
+                    this.total = totalMatch[1]
+                  }
+                }
+              })
+
+              const memberList = $('.member-list li')
+              if (memberList && memberList.length > 0) {
+                this.pageSize = memberList.length
+              }
+              resolve()
+            })
+        })
+      },
       getGroupUsersFilterByCity() {
         // const that = this
-        const url = _.trimEnd(this.params.title, '/') + '/member_search?search_text=' +
+        const url =
+          _.trimEnd(this.params.title, '/') +
+          '/member_search?search_text=' +
           encodeURIComponent(this.params.city)
 
         return new Promise((resolve, reject) => {

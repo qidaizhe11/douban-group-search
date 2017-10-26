@@ -15,8 +15,12 @@ export const doubanApi = {
     return DOUBAN_API_ROOT + `/api/v2/user/${userId}/following`
   },
   getHomeTimelineUrl: DOUBAN_API_ROOT + '/api/v2/status/home_timeline',
-  getHasNewRecsUrl: DOUBAN_API_ROOT + '/api/v2/user/recommended_users/has_new_recs',
+  getHasNewRecsUrl:
+    DOUBAN_API_ROOT + '/api/v2/user/recommended_users/has_new_recs',
   getGroupMembers(groupId) {
     return DOUBAN_API_ROOT + `/api/v2/group/${groupId}/members`
   }
 }
+
+export const SPIDER_USER_AGENT =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
