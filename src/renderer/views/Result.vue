@@ -1,23 +1,26 @@
 <template>
   <div class="page-container">
     <div class="filter-container">
+      <el-button size="mini" @click="onReturnClick">返回主页</el-button>
       <el-tag type="success">{{params.title}}</el-tag>
-      <el-tag type="success">{{params.sex}}</el-tag>
+      <!-- <el-tag type="success">{{params.sex}}</el-tag> -->
       <el-tag type="success">{{params.city}}</el-tag>
-      <el-button @click="onReturnClick">返回主页</el-button>
     </div>
     <div class="tooltip-container">
     </div>
     <div class="table-container">
       <el-table-wrapper ref="table" border stripe :data="tableData" :columns="tableColumns"
         :pagination="tablePagination">
-        <template slot-scope="scope" slot="image-slot">
-          <div class="image-container">
-            <img :src="scope.row.imageUrl"></img>
+        <template slot-scope="scope" slot="name-slot">
+          <div class="name-container">
+            <div class="avatar-container">
+              <img :src="scope.row.imageUrl" class="avatar"></img>
+            </div>
+            <span>{{scope.row.name}}</span>
           </div>
         </template>
         <template slot-scope="scope" slot="url-slot">
-          <el-button @click="onUserUrlClick(scope.row.url)">主页</el-button>
+          <el-button type="text" @click="onUserUrlClick(scope.row.url)">主页</el-button>
         </template>
       </el-table-wrapper>
     </div>
@@ -33,6 +36,7 @@
   import request from 'superagent'
   import cheerio from 'cheerio'
   import ElTableWrapper from 'element-table-wrapper'
+  import _ from 'lodash'
 
   import router from 'router'
   import { INIT_USRE_INFO_FROM_STORAGE } from 'store/mutation-types'
@@ -48,24 +52,12 @@
   export default {
     data() {
       return {
-        params: {
-          type: 'group',
-          title: 'https://www.douban.com/group/mini150cm/',
-          id: '324211',
-          sex: 'female',
-          city: '郑州'
-        },
         tableData: [],
         tableColumns: [
           {
-            prop: 'imageUrl',
-            label: '头像',
-            width: 100,
-            scopedSlot: 'image-slot'
-          },
-          {
             prop: 'name',
-            label: '昵称'
+            label: '昵称',
+            scopedSlot: 'name-slot'
           },
           {
             prop: 'gender',
@@ -75,7 +67,7 @@
           {
             prop: 'city',
             label: '城市',
-            width: 150
+            width: 100
           },
           {
             prop: 'followingCount',
@@ -105,7 +97,7 @@
           {
             prop: 'url',
             label: '主页',
-            width: 150,
+            width: 100,
             scopedSlot: 'url-slot'
           }
         ],
@@ -118,7 +110,8 @@
     },
     computed: {
       ...mapState({
-        user: state => state.user
+        user: state => state.user,
+        params: state => state.search.params
       })
     },
     async mounted() {
@@ -152,9 +145,8 @@
       },
       getGroupUsersFilterByCity() {
         // const that = this
-        const url =
-          'https://www.douban.com/group/mini150cm/member_search?search_text=' +
-          encodeURIComponent('郑州')
+        const url = _.trimEnd(this.params.title, '/') + '/member_search?search_text=' +
+          encodeURIComponent(this.params.city)
 
         return new Promise((resolve, reject) => {
           request
@@ -299,6 +291,23 @@
 
   .table-container {
     padding: 10px 0;
+
+    .name-container {
+      display: flex;
+      align-items: center;
+
+      .avatar-container {
+        padding-right: 10px;
+        display: flex;
+        align-items: center;
+
+        img {
+          $size: 30px;
+          width: $size;
+          height: $size;
+        }
+      }
+    }
 
     .image-container {
       display: flex;

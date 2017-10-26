@@ -16,11 +16,11 @@
           筛选条件：
         </div>
         <div class="filter-content">
-          <el-radio-group class="filter-sex" v-model="sex">
+          <!-- <el-radio-group class="filter-sex" v-model="sex">
             <el-radio label="male">男</el-radio>
             <el-radio label="female">女</el-radio>
             <el-radio label="all">男女不限</el-radio>
-          </el-radio-group>
+          </el-radio-group> -->
           <el-input class="filter-city" placeholder="城市" v-model="city">
           </el-input>
         </div>
@@ -38,15 +38,15 @@
   import { mapState } from 'vuex'
 
   import router from 'router'
-  import { INIT_USRE_INFO_FROM_STORAGE } from 'store/mutation-types'
+  import { INIT_USRE_INFO_FROM_STORAGE, SET_SEARCH_PARAMS } from 'store/mutation-types'
 
   export default {
     data() {
       return {
         type: 'group',
-        title: '',
+        title: 'https://www.douban.com/group/mini150cm/',
         sex: 'all',
-        city: ''
+        city: '郑州'
       }
     },
     computed: {
@@ -65,7 +65,14 @@
     },
     methods: {
       onSearch() {
-        router.push('/result')
+        // router.push('/result')
+        this.$store.dispatch(SET_SEARCH_PARAMS, {
+          title: this.title,
+          city: this.city,
+          type: this.type
+        }).then(() => {
+          router.push('/result')
+        })
       }
     }
   }
