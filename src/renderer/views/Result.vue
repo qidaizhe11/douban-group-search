@@ -16,7 +16,7 @@
     </div>
     <div class="table-container">
       <el-table-wrapper ref="table" border stripe :data="tableData" :columns="tableColumns"
-        :pagination="tablePagination">
+        :pagination="tablePagination" :show-custom-header="true">
         <template slot-scope="scope" slot="name-slot">
           <div class="name-container">
             <div class="avatar-container">
@@ -64,42 +64,50 @@
           {
             prop: 'name',
             label: '昵称',
-            scopedSlot: 'name-slot'
+            scopedSlot: 'name-slot',
+            searchable: true
           },
           {
             prop: 'gender',
             label: '性别',
-            width: 80
+            width: 80,
+            searchable: true
           },
           {
             prop: 'city',
             label: '城市',
-            width: 100
+            width: 100,
+            searchable: true
           },
           {
             prop: 'followingCount',
             label: '关注',
-            width: 80
+            width: 100,
+            sortable: true
           },
           {
             prop: 'followersCount',
             label: '关注者',
-            width: 80
+            width: 120,
+            sortable: true
           },
           {
             prop: 'joinedGroupCount',
             label: '加入小组',
-            width: 100
+            width: 120,
+            sortable: true
           },
           {
             prop: 'latestStreamTimeShow',
             label: '最近活跃时间',
-            width: 180
+            width: 180,
+            sortable: true
           },
           {
             prop: 'registerTimeShow',
             label: '注册时间',
-            width: 180
+            width: 180,
+            sortable: true
           },
           {
             prop: 'url',
@@ -115,7 +123,7 @@
         },
         total: 0,
         pageSize: 0,
-        currentPage: 1,
+        currentPage: 0,
         current: {
           total: 0,
           current: 0
@@ -160,12 +168,20 @@
         return
       }
       await this.getGroupUsersTotal(url)
-      console.log('Result, getGroupUsersTotal:', this.total)
 
-      const userList = await this.getGroupUsersFilterByCity(url)
-      this.addUserIdOfUserList(userList)
+      const pages = Math.floor(this.total / this.pageSize)
+      let start = 0
+      for (let i = 0; i < pages;) {
+        this.currentPage = i + 1
+        const currentUrl = url + `&start=${start}`
 
-      this.getUserDetailOfUserList(userList)
+        const userList = await this.getGroupUsersFilterByCity(currentUrl)
+        this.addUserIdOfUserList(userList)
+
+        await this.getUserDetailOfUserList(userList)
+        start += userList.length
+        ++i
+      }
     },
     methods: {
       onReturnClick() {
@@ -270,7 +286,7 @@
         console.log('Result, here, userList:', userList)
         return userList
       },
-      getUserDetailOfUserList(userList) {
+      async getUserDetailOfUserList(userList) {
         if (!userList) {
           return
         }
@@ -282,12 +298,12 @@
           current: 0
         }
 
-        const that = this
-        userList.map((user, i) => {
-          setTimeout(() => {
-            that.getUserDetail(user)
-          }, 300 * i)
-        })
+        let i = 0
+        while (i < userList.length) {
+          const user = userList[i]
+          await this.getUserDetail(user)
+          ++i
+        }
       },
       async getUserDetail(user) {
         const that = this
@@ -327,8 +343,6 @@
               userId: user.id,
               slice
             })
-
-            console.log('fetchGetUserLifeStream, got data:', data)
             if (data && data.items && data.items.length > 0) {
               const date = new Date(data.items[0].time)
               user.latestStreamTime = date
@@ -337,6 +351,7 @@
 
             that.current.current = that.current.current + 1
             that.tableData.push(user)
+            return user
           }
         }
       }
