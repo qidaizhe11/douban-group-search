@@ -6,7 +6,13 @@
       <!-- <el-tag type="success">{{params.sex}}</el-tag> -->
       <el-tag type="success">{{params.city}}</el-tag>
     </div>
-    <div class="tooltip-container">
+    <div class="tooltip-container" v-if="total > 0">
+      <span class="total-text">共{{total}}条结果</span>
+      <span class="current-text">正在加载第{{currentPage}}页（共{{pages}}页）</span>
+      <el-progress :percentage="currentPercent" :show-text="false" class="current-percent"></el-progress>
+      <!-- <div class="total-percent"> -->
+      <el-progress type="circle" :width="40" :percentage="totalPercent" class="total-percent"></el-progress>
+      <!-- </div> -->
     </div>
     <div class="table-container">
       <el-table-wrapper ref="table" border stripe :data="tableData" :columns="tableColumns"
@@ -109,14 +115,33 @@
         },
         total: 0,
         pageSize: 0,
-        currentPage: 0
+        currentPage: 1,
+        current: {
+          total: 0,
+          current: 0
+        }
       }
     },
     computed: {
       ...mapState({
         user: state => state.user,
         params: state => state.search.params
-      })
+      }),
+      pages() {
+        return Math.floor(this.total / this.pageSize)
+      },
+      totalPercent() {
+        if (!(this.total > 0)) {
+          return 0
+        }
+        return Math.round(this.tableData.length / this.total * 100)
+      },
+      currentPercent() {
+        if (!this.current.current) {
+          return 0
+        }
+        return Math.round(this.current.current / this.current.total * 100)
+      }
     },
     async mounted() {
       const that = this
@@ -127,18 +152,20 @@
         return
       }
 
-      // const userList = await this.getGroupUsersFilterByCity()
-      // this.addUserIdOfUserList(userList)
-      // this.getUserDetailOfUserList(userList)
-
       const url =
         _.trimEnd(this.params.title, '/') +
         '/member_search?search_text=' +
         encodeURIComponent(this.params.city)
-      if (url) {
-        await this.getGroupUsersTotal(url)
-        console.log('Result, getGroupUsersTotal:', this.total)
+      if (!url) {
+        return
       }
+      await this.getGroupUsersTotal(url)
+      console.log('Result, getGroupUsersTotal:', this.total)
+
+      const userList = await this.getGroupUsersFilterByCity(url)
+      this.addUserIdOfUserList(userList)
+
+      this.getUserDetailOfUserList(userList)
     },
     methods: {
       onReturnClick() {
@@ -188,20 +215,11 @@
             })
         })
       },
-      getGroupUsersFilterByCity() {
-        // const that = this
-        const url =
-          _.trimEnd(this.params.title, '/') +
-          '/member_search?search_text=' +
-          encodeURIComponent(this.params.city)
-
+      getGroupUsersFilterByCity(url) {
         return new Promise((resolve, reject) => {
           request
             .get(url)
-            .set(
-              'User-Agent',
-              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
-            )
+            .set('User-Agent', SPIDER_USER_AGENT)
             .end((err, res) => {
               if (err) {
                 console.log('Result, request error:', err)
@@ -259,6 +277,11 @@
 
         this.userList = userList
 
+        this.current = {
+          total: userList.length,
+          current: 0
+        }
+
         const that = this
         userList.map((user, i) => {
           setTimeout(() => {
@@ -312,6 +335,7 @@
               user.latestStreamTimeShow = date.toISOString().slice(0, 10)
             }
 
+            that.current.current = that.current.current + 1
             that.tableData.push(user)
           }
         }
@@ -319,6 +343,14 @@
     }
   }
 </script>
+
+<style lang="scss">
+  .el-progress.current-percent {
+    .el-progress-bar__inner {
+      background-color: #20a0ff;
+    }
+  }
+</style>
 
 <style lang="scss" scoped>
   .page-container {
@@ -333,6 +365,29 @@
 
     .el-tag {
       margin-right: 10px;
+    }
+  }
+
+  .tooltip-container {
+    padding: 20px 0 10px 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .total-text {
+      padding-right: 30px;
+    }
+    .current-text {
+      padding-right: 5px;
+    }
+    .current-percent {
+      width: 300px;
+      margin-right: 30px;
+    }
+    .total-percent {
+      $size: 40px;
+      width: $size;
+      height: $size;
     }
   }
 
