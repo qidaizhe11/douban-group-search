@@ -277,7 +277,13 @@
 
         // const that = this
         userList.map((user, i) => {
-          const userIdMatch = user.imageUrl.match(/icon\/u(\d+)(?:-\d+.)?/)
+          let userIdMatch = user.imageUrl.match(/icon\/u(\d+)(?:-\d+.)?/)
+          if (!userIdMatch) {
+            userIdMatch = user.url.match(/people\/(\d+)/)
+            if (!userIdMatch) {
+              return
+            }
+          }
           if (userIdMatch.length > 1) {
             user.id = userIdMatch[1]
           }
@@ -308,6 +314,10 @@
       async getUserDetail(user) {
         const that = this
         const accessToken = this.user.accessToken
+
+        if (!user || !user.id) {
+          return
+        }
 
         let data = await fetchGetUserInfo({
           accessToken,
