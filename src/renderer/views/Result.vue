@@ -176,7 +176,8 @@
       }
       await this.getGroupUsersTotal(url)
 
-      const pages = Math.floor((this.total - 1) / this.pageSize + 1)
+      // const pages = Math.floor((this.total - 1) / this.pageSize + 1)
+      const pages = 1
       let start = 0
       for (let i = 0; i < pages;) {
         this.currentPage = i + 1
