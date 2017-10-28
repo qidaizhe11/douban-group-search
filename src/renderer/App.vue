@@ -4,9 +4,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+  // import Vue, { ComponentOptions } from 'vue'
   export default {
-    name: 'douban-group-find-user'
+    name: 'douban-group-search'
   }
 </script>
 

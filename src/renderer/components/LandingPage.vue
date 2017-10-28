@@ -29,18 +29,29 @@
   </div>
 </template>
 
-<script>
-  import SystemInformation from './LandingPage/SystemInformation'
-
+<script lang="ts">
+  // import Vue, { ComponentOptions } from 'vue'
+  
   export default {
     name: 'landing-page',
-    components: { SystemInformation },
     methods: {
-      open (link) {
+      open(link: string) {
         this.$electron.shell.openExternal(link)
       }
     }
   }
+
+  // import SystemInformation from './LandingPage/SystemInformation'
+
+  // export default {
+  //   name: 'landing-page',
+  //   components: { SystemInformation },
+  //   methods: {
+  //     open (link) {
+  //       this.$electron.shell.openExternal(link)
+  //     }
+  //   }
+  // }
 </script>
 
 <style>
