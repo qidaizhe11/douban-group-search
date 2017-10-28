@@ -65,6 +65,13 @@
             prop: 'name',
             label: '昵称',
             scopedSlot: 'name-slot',
+            searchable: true,
+            width: 180,
+            showOverflowTooltip: true
+          },
+          {
+            prop: 'introduction',
+            label: '简介',
             searchable: true
           },
           {
@@ -136,7 +143,7 @@
         params: state => state.search.params
       }),
       pages() {
-        return Math.floor(this.total / this.pageSize)
+        return Math.floor((this.total - 1) / this.pageSize + 1)
       },
       totalPercent() {
         if (!(this.total > 0)) {
@@ -169,7 +176,7 @@
       }
       await this.getGroupUsersTotal(url)
 
-      const pages = Math.floor(this.total / this.pageSize)
+      const pages = Math.floor((this.total - 1) / this.pageSize + 1)
       let start = 0
       for (let i = 0; i < pages;) {
         this.currentPage = i + 1
@@ -275,7 +282,6 @@
           return
         }
 
-        // const that = this
         userList.map((user, i) => {
           let userIdMatch = user.imageUrl.match(/icon\/u(\d+)(?:-\d+.)?/)
           if (!userIdMatch) {
@@ -338,6 +344,7 @@
             name: data.loc.name,
             uid: data.loc.uid
           }
+          user.introduction = data.intro.substring(0, 200)
         }
 
         data = await fetchGetUserLifeStreamTimeSlices({

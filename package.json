@@ -23,7 +23,7 @@
     "theme": "et -c ./src/renderer/style/element-variables.css -o ./src/renderer/style/theme"
   },
   "build": {
-    "productName": "douban-group-find-user",
+    "productName": "douban-group-search",
     "appId": "org.simulatedgreg.electron-vue",
     "directories": {
       "output": "build"
