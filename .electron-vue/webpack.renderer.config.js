@@ -26,7 +26,7 @@ let rendererConfig = {
   // devtool: '#cheap-module-eval-source-map',
   devtool: '#cheap-eval-source-map',
   entry: {
-    renderer: path.join(__dirname, '../src/renderer/main.js')
+    renderer: path.join(__dirname, '../src/renderer/main.ts')
   },
   externals: [
     ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
@@ -74,6 +74,14 @@ let rendererConfig = {
               scss: 'vue-style-loader!css-loader!sass-loader'
             }
           }
+        }
+      },
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/,
+        options: {
+          appendTsSuffixTo: [/\.vue$/],
         }
       },
       {
@@ -142,7 +150,7 @@ let rendererConfig = {
       'router': path.join(__dirname, '../src/renderer/router'),
       'config': path.join(__dirname, '../src/renderer/config')
     },
-    extensions: ['.js', '.vue', '.json', '.css', '.node']
+    extensions: ['.js', '.ts', '.vue', '.json', '.css', '.node']
   },
   target: 'electron-renderer'
 }

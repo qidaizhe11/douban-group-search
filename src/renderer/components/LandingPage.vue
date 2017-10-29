@@ -6,7 +6,6 @@
         <span class="title">
           Welcome to your new project!
         </span>
-        <system-information></system-information>
       </div>
 
       <div class="right-side">
@@ -33,12 +32,12 @@
   // import Vue, { ComponentOptions } from 'vue'
   
   export default {
-    name: 'landing-page',
-    methods: {
-      open(link: string) {
-        this.$electron.shell.openExternal(link)
-      }
-    }
+    name: 'landing-page'
+    // methods: {
+    //   open(link: string) {
+    //     this.$electron.shell.openExternal(link)
+    //   }
+    // }
   }
 
   // import SystemInformation from './LandingPage/SystemInformation'

@@ -7,7 +7,7 @@ declare module 'vue/types/vue' {
     $electron?: any
   }
 
-  namespace Vue {
-    let http: any
-  }
+  // namespace Vue {
+  //   let http: any
+  // }
 }
