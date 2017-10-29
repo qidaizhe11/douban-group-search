@@ -1,3 +1,5 @@
+/// <reference path="../declarations.d.ts" />
+
 import qs from 'qs'
 
 import fetch from '../utils/fetch'
@@ -9,11 +11,11 @@ const commonParams = {
   udid: '8a2a02080cd222dfd017d22833736a7ee3a9bae5'
 }
 
-export function fetchGetGroupMembers(params) {
+export function fetchGetGroupMembers(params: any) {
   if (!params.groupId) {
     return
   }
-  return fetch({
+  return fetch.request({
     url: `/api/v2/group/${params.groupId}/members`,
     method: 'get',
     headers: {
@@ -27,11 +29,11 @@ export function fetchGetGroupMembers(params) {
   })
 }
 
-export function fetchGetUserInfo(params) {
+export function fetchGetUserInfo(params: any) {
   if (!params.userId) {
     return
   }
-  return fetch({
+  return fetch.request({
     url: `/api/v2/user/${params.userId}/`,
     method: 'get',
     headers: {
@@ -43,11 +45,11 @@ export function fetchGetUserInfo(params) {
   })
 }
 
-export function fetchGetUserLifeStreamTimeSlices(params) {
+export function fetchGetUserLifeStreamTimeSlices(params: any) {
   if (!params.userId) {
     return
   }
-  return fetch({
+  return fetch.request({
     url: `/api/v2/user/${params.userId}/lifestream/timeslices`,
     method: 'get',
     headers: {
@@ -59,11 +61,11 @@ export function fetchGetUserLifeStreamTimeSlices(params) {
   })
 }
 
-export function fetchGetUserLifeStream(params) {
+export function fetchGetUserLifeStream(params: any) {
   if (!params.userId) {
     return
   }
-  return fetch({
+  return fetch.request({
     url: `/api/v2/user/${params.userId}/lifestream`,
     method: 'get',
     headers: {
@@ -77,12 +79,12 @@ export function fetchGetUserLifeStream(params) {
   })
 }
 
-export function fetchLogin(params) {
+export function fetchLogin(params: any) {
   if (!params.account || !params.password) {
     return
   }
 
-  return fetch({
+  return fetch.request({
     url: '/service/auth2/token',
     method: 'post',
     headers: {

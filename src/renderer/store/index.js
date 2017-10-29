@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 
 import modules from './modules'
 
+// hehe
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({

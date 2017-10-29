@@ -17,10 +17,10 @@
         </div>
         <div class="filter-content">
           <!-- <el-radio-group class="filter-sex" v-model="sex">
-            <el-radio label="male">男</el-radio>
-            <el-radio label="female">女</el-radio>
-            <el-radio label="all">男女不限</el-radio>
-          </el-radio-group> -->
+              <el-radio label="male">男</el-radio>
+              <el-radio label="female">女</el-radio>
+              <el-radio label="all">男女不限</el-radio>
+            </el-radio-group> -->
           <el-input class="filter-city" placeholder="城市" v-model="city">
           </el-input>
         </div>
@@ -34,11 +34,15 @@
   </div>
 </template>
 
-<script>
-  import { mapState } from 'vuex'
+<script lang="ts">
+  // import { mapState } from 'vuex'
 
   import router from 'router'
-  import { INIT_USRE_INFO_FROM_STORAGE, SET_SEARCH_PARAMS } from 'store/mutation-types'
+  import {
+    INIT_USRE_INFO_FROM_STORAGE,
+    SET_SEARCH_PARAMS
+  } from 'store/mutation-types'
+  import { SearchParams } from 'store/modules/search'
 
   export default {
     data() {
@@ -50,27 +54,27 @@
       }
     },
     computed: {
-      ...mapState({
-        user: state => state.user
-      })
+      // ...mapState({
+      //   user: (state: any) => state.user
+      // })
     },
     mounted() {
       const that = this
-      this.$store.dispatch(INIT_USRE_INFO_FROM_STORAGE)
-        .then(() => {
-          if (!that.user.isLogined) {
-            router.push('/login')
-          }
-        })
+      this.$store.dispatch(INIT_USRE_INFO_FROM_STORAGE).then(() => {
+        if (!that.user.isLogined) {
+          router.push('/login')
+        }
+      })
     },
     methods: {
       onSearch() {
         // router.push('/result')
-        this.$store.dispatch(SET_SEARCH_PARAMS, {
+        const params: SearchParams = {
           title: this.title,
           city: this.city,
-          type: this.type
-        }).then(() => {
+          type: 'group'
+        }
+        this.$store.dispatch(SET_SEARCH_PARAMS, params).then(() => {
           router.push('/result')
         })
       }

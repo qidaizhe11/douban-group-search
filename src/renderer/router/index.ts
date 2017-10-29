@@ -6,15 +6,15 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/landing',
       name: 'landing-page',
       component: require('@/components/LandingPage.vue').default
-    }
-    // {
-    //   path: '/',
-    //   name: 'index',
-    //   component: require('views/Index').default
-    // },
+    },
+    {
+      path: '/',
+      name: 'index',
+      component: require('views/Index').default
+    },
     // {
     //   path: '/result',
     //   name: 'result',
