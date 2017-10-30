@@ -1,70 +1,84 @@
-import {
-  fetchLogin
-} from 'api'
+import { fetchLogin } from 'api'
 import router from 'router'
 import * as types from 'store/mutation-types'
 
+import { ActionContext, UserInfo } from 'store/declarations'
+import { PostLoginParams } from 'api/declarations'
+
+interface State {
+  id: string
+  name: string
+  accessToken: string
+  refreshToken: string
+  tokenExpiredTime: Date | null
+  isLogined: boolean
+}
+
+const state: State = {
+  id: '',
+  name: '',
+  accessToken: '',
+  refreshToken: '',
+  tokenExpiredTime: null,
+  isLogined: false
+}
+
 const user = {
-  state: {
-    id: '',
-    name: '',
-    accessToken: '',
-    refreshToken: '',
-    tokenExpiredTime: null,
-    isLogined: false
-  },
+  state: state,
   mutations: {
-    [types.SET_USER_INFO](state, user) {
-      console.log('action, SET_USER_INFO, user:', user)
-      state.id = user.id
-      state.accessToken = user.accessToken
+    [types.SET_USER_INFO](state: State, user: UserInfo) {
+      state.id = user.id || ''
+      state.accessToken = user.accessToken || ''
       if (user.accessToken) {
         state.isLogined = true
       }
     },
-    [types.LOGIN_SUCCESS](state, data) {
+    [types.LOGIN_SUCCESS](state: State, userInfo: UserInfo) {
       state.isLogined = true
-      state.id = data.douban_user_id
-      state.name = data.douban_user_name
-      state.accessToken = data.access_token
-      state.refreshToken = data.refresh_token
-
-      const dateNow = new Date()
-      dateNow.setSeconds(dateNow.getSeconds() + data.expires_in)
-      state.tokenExpiredTime = dateNow
+      state = {
+        ...state,
+        ...userInfo
+      }
 
       localStorage.setItem('userId', state.id)
       localStorage.setItem('accessToken', state.accessToken)
-      localStorage.setItem('tokenExpiredTime', state.tokenExpiredTime.toISOString())
+      localStorage.setItem(
+        'tokenExpiredTime',
+        state.tokenExpiredTime ? state.tokenExpiredTime.toISOString() : ''
+      )
       localStorage.setItem('refreshToken', state.refreshToken)
 
       router.push('/')
     }
   },
   actions: {
-    [types.FETCH_POST_LOGIN]({
-      commit,
-      state
-    }, data) {
-      fetchLogin({
-        account: data.account,
-        password: data.password
-      }).then(data => {
-        commit(types.LOGIN_SUCCESS, data)
+    [types.FETCH_POST_LOGIN](context: ActionContext, params: PostLoginParams) {
+      fetchLogin(params).then((data: any) => {
+        let tokenExpiredTime = null
+        if (data.expires_in) {
+          const dateNow = new Date()
+          dateNow.setSeconds(dateNow.getSeconds() + data.expires_in)
+          tokenExpiredTime = dateNow
+        }
+
+        const userInfo: UserInfo = {
+          id: data.douban_user_id,
+          name: data.douban_user_name,
+          accessToken: data.access_token,
+          refreshToken: data.refresh_token,
+          tokenExpiredTime: tokenExpiredTime
+        }
+        context.commit(types.LOGIN_SUCCESS, userInfo)
       })
     },
-    [types.INIT_USRE_INFO_FROM_STORAGE]({
-      commit,
-      state
-    }) {
-      console.log('store/user, init_user_info_from_storage.')
+    [types.INIT_USRE_INFO_FROM_STORAGE](context: ActionContext) {
       const userId = localStorage.getItem('userId') || ''
       const accessToken = localStorage.getItem('accessToken') || ''
       const refreshToken = localStorage.getItem('refreshToken') || ''
       const tokenExpiredTime = localStorage.getItem('tokenExpiredTime') || ''
 
       return new Promise((resolve, reject) => {
-        commit(types.SET_USER_INFO, {
+        context.commit(types.SET_USER_INFO, {
           id: userId,
           accessToken,
           refreshToken,

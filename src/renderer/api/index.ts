@@ -1,8 +1,11 @@
 /// <reference path="../declarations.d.ts" />
 
 import qs from 'qs'
+// import { AxiosPromise } from 'axios'
 
 import fetch from '../utils/fetch'
+
+import { PostLoginParams } from './declarations'
 
 const commonParams = {
   apikey: '0dad551ec0f84ed02907ff5c42e8ec70',
@@ -19,7 +22,7 @@ export function fetchGetGroupMembers(params: any) {
     url: `/api/v2/group/${params.groupId}/members`,
     method: 'get',
     headers: {
-      'Authorization': 'Bearer ' + params.accessToken
+      Authorization: 'Bearer ' + params.accessToken
     },
     params: {
       start: 0,
@@ -37,7 +40,7 @@ export function fetchGetUserInfo(params: any) {
     url: `/api/v2/user/${params.userId}/`,
     method: 'get',
     headers: {
-      'Authorization': 'Bearer ' + params.accessToken
+      Authorization: 'Bearer ' + params.accessToken
     },
     params: {
       ...commonParams
@@ -53,7 +56,7 @@ export function fetchGetUserLifeStreamTimeSlices(params: any) {
     url: `/api/v2/user/${params.userId}/lifestream/timeslices`,
     method: 'get',
     headers: {
-      'Authorization': 'Bearer ' + params.accessToken
+      Authorization: 'Bearer ' + params.accessToken
     },
     params: {
       ...commonParams
@@ -69,7 +72,7 @@ export function fetchGetUserLifeStream(params: any) {
     url: `/api/v2/user/${params.userId}/lifestream`,
     method: 'get',
     headers: {
-      'Authorization': 'Bearer ' + params.accessToken
+      Authorization: 'Bearer ' + params.accessToken
     },
     params: {
       count: 20,
@@ -79,10 +82,10 @@ export function fetchGetUserLifeStream(params: any) {
   })
 }
 
-export function fetchLogin(params: any) {
-  if (!params.account || !params.password) {
-    return
-  }
+export function fetchLogin(params: PostLoginParams) {
+  // if (!params.account || !params.password) {
+  //   return
+  // }
 
   return fetch.request({
     url: '/service/auth2/token',

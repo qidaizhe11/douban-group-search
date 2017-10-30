@@ -1,6 +1,6 @@
 import * as types from 'store/mutation-types'
 
-import { ActionContext } from './util'
+import { ActionContext } from 'store/declarations'
 
 export interface SearchParams {
   type: 'group',
