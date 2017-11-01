@@ -17,10 +17,10 @@
         </div>
         <div class="filter-content">
           <!-- <el-radio-group class="filter-sex" v-model="sex">
-                  <el-radio label="male">男</el-radio>
-                  <el-radio label="female">女</el-radio>
-                  <el-radio label="all">男女不限</el-radio>
-                </el-radio-group> -->
+                        <el-radio label="male">男</el-radio>
+                        <el-radio label="female">女</el-radio>
+                        <el-radio label="all">男女不限</el-radio>
+                      </el-radio-group> -->
           <el-input class="filter-city" placeholder="城市" v-model="city">
           </el-input>
         </div>
@@ -35,51 +35,54 @@
 </template>
 
 <script lang="ts">
-  // import { mapState } from 'vuex'
-
   import Vue from 'vue'
-  import Component from 'vue-class-component'
+  import { mapState } from 'vuex'
+  import { State } from 'store/declarations'
 
   import router from 'router'
-  import store from 'store'
+  import store from 'store/index'
   import {
     INIT_USRE_INFO_FROM_STORAGE,
     SET_SEARCH_PARAMS
   } from 'store/mutation-types'
   import { SearchParams } from 'store/modules/search'
 
-  @Component
-  export default class Index extends Vue {
-    type = 'group'
-    title = 'https://www.douban.com/group/mini150cm/'
-    sex = 'all'
-    city = '郑州'
-    // computed: {
-    //   // ...mapState({
-    //   //   user: (state: any) => state.user
-    //   // })
-    // },
+  export default Vue.extend({
+    data() {
+      return {
+        type: 'group',
+        title: 'https://www.douban.com/group/mini150cm/',
+        sex: 'all',
+        city: '郑州'
+      }
+    },
+    computed: {
+      ...mapState({
+        user: (state: State) => state.user
+      })
+    },
     mounted() {
       // const that = this
       store.dispatch(INIT_USRE_INFO_FROM_STORAGE).then(() => {
-        // if (!that.user.isLogined) {
-        //   router.push('/login')
-        // }
+        if (!this.user.isLogined) {
+          router.push('/login')
+        }
       })
-    }
-
-    onSearch() {
-      // router.push('/result')
-      const params: SearchParams = {
-        title: this.title,
-        city: this.city,
-        type: 'group'
+    },
+    methods: {
+      onSearch() {
+        // router.push('/result')
+        const params: SearchParams = {
+          title: this.title,
+          city: this.city,
+          type: 'group'
+        }
+        store.dispatch(SET_SEARCH_PARAMS, params).then(() => {
+          router.push('/result')
+        })
       }
-      store.dispatch(SET_SEARCH_PARAMS, params).then(() => {
-        router.push('/result')
-      })
     }
-  }
+  })
 </script>
 
 <style lang="scss" scoped>

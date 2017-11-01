@@ -5,7 +5,7 @@ import * as types from 'store/mutation-types'
 import { ActionContext, UserInfo } from 'store/declarations'
 import { PostLoginParams } from 'api/declarations'
 
-interface State {
+export interface UserState {
   id: string
   name: string
   accessToken: string
@@ -14,7 +14,7 @@ interface State {
   isLogined: boolean
 }
 
-const state: State = {
+const state: UserState = {
   id: '',
   name: '',
   accessToken: '',
@@ -26,14 +26,14 @@ const state: State = {
 const user = {
   state: state,
   mutations: {
-    [types.SET_USER_INFO](state: State, user: UserInfo) {
+    [types.SET_USER_INFO](state: UserState, user: UserInfo) {
       state.id = user.id || ''
       state.accessToken = user.accessToken || ''
       if (user.accessToken) {
         state.isLogined = true
       }
     },
-    [types.LOGIN_SUCCESS](state: State, userInfo: UserInfo) {
+    [types.LOGIN_SUCCESS](state: UserState, userInfo: UserInfo) {
       state.isLogined = true
       state = {
         ...state,

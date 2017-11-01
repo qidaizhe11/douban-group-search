@@ -8,11 +8,11 @@ export interface SearchParams {
   city: string
 }
 
-interface State {
+export interface SearchState {
   params: SearchParams
 }
 
-const state: State = {
+const state: SearchState = {
   params: {
     type: 'group',
     title: '',
@@ -23,7 +23,7 @@ const state: State = {
 export default {
   state: state,
   mutations: {
-    [types.SET_SEARCH_PARAMS](state: State, params: SearchParams) {
+    [types.SET_SEARCH_PARAMS](state: SearchState, params: SearchParams) {
       state.params = {
         ...state.params,
         ...params

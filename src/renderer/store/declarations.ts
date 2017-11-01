@@ -1,4 +1,6 @@
 import { Commit, Dispatch } from 'vuex'
+import { UserState } from './modules/user'
+import { SearchState } from './modules/search'
 
 export interface ActionContext {
   commit: Commit
@@ -12,4 +14,9 @@ export interface UserInfo {
   refreshToken?: string
   tokenExpiredTime?: Date | null
   isLogined?: boolean
+}
+
+export interface State {
+  user: UserState,
+  search: SearchState
 }

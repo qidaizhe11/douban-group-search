@@ -7,12 +7,12 @@
    [key: string]: any
  }
 
-const files = require.context('.', false, /\.js$/)
+const files = require.context('.', false, /\.ts$/)
 const modules: ModulesMap = {}
 
 files.keys().forEach((key: string) => {
-  if (key === './index.js') return
-  modules[key.replace(/(\.\/|\.js)/g, '')] = files(key).default
+  if (key === './index.ts') return
+  modules[key.replace(/(\.\/|\.ts)/g, '')] = files(key).default
 })
 
 export default modules
