@@ -1,5 +1,3 @@
-/// <reference path="../declarations.d.ts" />
-
 import qs from 'qs'
 // import { AxiosPromise } from 'axios'
 
@@ -15,9 +13,9 @@ const commonParams = {
 }
 
 export function fetchGetGroupMembers(params: any) {
-  if (!params.groupId) {
-    return
-  }
+  // if (!params.groupId) {
+  //   return
+  // }
   return fetch.request({
     url: `/api/v2/group/${params.groupId}/members`,
     method: 'get',

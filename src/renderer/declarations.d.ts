@@ -1,1 +1,5 @@
 declare module 'qs'
+declare module 'superagent'
+declare module 'cheerio'
+declare module 'element-table-wrapper'
+declare module 'lodash'

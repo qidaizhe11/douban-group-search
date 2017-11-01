@@ -35,7 +35,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
   import { shell } from 'electron'
   import Vue from 'vue'
   import { mapState } from 'vuex'
@@ -46,6 +46,7 @@
 
   import router from 'router'
   import { INIT_USRE_INFO_FROM_STORAGE } from 'store/mutation-types'
+  import { State } from 'store/declarations'
   import {
     fetchGetGroupMembers,
     fetchGetUserInfo,
@@ -56,10 +57,35 @@
 
   Vue.use(ElTableWrapper)
 
-  export default {
+  interface UserLocation {
+    id: string,
+    name: string,
+    uid: string
+  }
+
+  interface User {
+    id?: string,
+    name?: string,
+    url?: string,
+    imageUrl?: string,
+    city?: string,
+    gender?: string,
+    location?: UserLocation,
+    introduction?: string,
+    followingCount?: number,
+    followersCount?: number,
+    joinedGroupCount?: number,
+    registerTime?: string,
+    registerTimeShow?: string,
+    latestStreamTime?: Date,
+    latestStreamTimeShow?: string
+  }
+
+  export default Vue.extend({
     data() {
+      const tableData: User[] = []
       return {
-        tableData: [],
+        tableData: tableData,
         tableColumns: [
           {
             prop: 'name',
@@ -139,19 +165,19 @@
     },
     computed: {
       ...mapState({
-        user: state => state.user,
-        params: state => state.search.params
+        user: (state: State) => state.user,
+        params: (state: State) => state.search.params
       }),
-      pages() {
+      pages(): number {
         return Math.floor((this.total - 1) / this.pageSize + 1)
       },
-      totalPercent() {
+      totalPercent(): number {
         if (!(this.total > 0)) {
           return 0
         }
         return Math.round(this.tableData.length / this.total * 100)
       },
-      currentPercent() {
+      currentPercent(): number {
         if (!this.current.current) {
           return 0
         }
@@ -195,7 +221,7 @@
       onReturnClick() {
         router.push('/')
       },
-      onUserUrlClick(url) {
+      onUserUrlClick(url: string) {
         shell.openExternal(url)
       },
       getGroupUsers() {
@@ -208,12 +234,12 @@
           console.log('fetchGetGroupUsers, got data:', data)
         })
       },
-      getGroupUsersTotal(url) {
+      getGroupUsersTotal(url: string) {
         return new Promise((resolve, reject) => {
           request
             .get(url)
             .set('User-Agent', SPIDER_USER_AGENT)
-            .end((err, res) => {
+            .end((err: any, res: any) => {
               if (err) {
                 reject()
                 return
@@ -222,7 +248,7 @@
               const $ = cheerio.load(res.text)
               const totalContents = $('#content .article .wrap h3').contents()
               console.log('totalContents:', totalContents, typeof totalContents)
-              totalContents.map((i, node) => {
+              totalContents.map((i: number, node: any) => {
                 if (node.type === 'text' && /共\d+人/.test(node.data)) {
                   const totalMatch = node.data.match(/共(\d+)人/)
                   if (totalMatch.length > 1) {
@@ -239,22 +265,22 @@
             })
         })
       },
-      getGroupUsersFilterByCity(url) {
-        return new Promise((resolve, reject) => {
+      getGroupUsersFilterByCity(url: string) {
+        return new Promise<Array<User>>((resolve, reject) => {
           request
             .get(url)
             .set('User-Agent', SPIDER_USER_AGENT)
-            .end((err, res) => {
+            .end((err: any, res: any) => {
               if (err) {
                 console.log('Result, request error:', err)
               }
               console.log('Result, request success, res:', res)
               const $ = cheerio.load(res.text)
               const $memberList = $('.member-list li')
-              const userList = []
-              $memberList.each((i, value) => {
+              const userList: Array<object> = []
+              $memberList.each((i: number, value: any) => {
                 const member = $(value)
-                const user = {}
+                const user: User = {}
                 const memberNameNode = member.find('.name a').first()
                 if (memberNameNode) {
                   user.name = memberNameNode.text()
@@ -278,15 +304,20 @@
             })
         })
       },
-      addUserIdOfUserList(userList) {
+      addUserIdOfUserList(userList: Array<User>) {
         if (!userList) {
           return
         }
 
-        userList.map((user, i) => {
-          let userIdMatch = user.imageUrl.match(/icon\/u(\d+)(?:-\d+.)?/)
+        userList.map((user: User, i: number) => {
+          let userIdMatch: RegExpMatchArray | null = null
+          if (user.imageUrl) {
+            userIdMatch = user.imageUrl.match(/icon\/u(\d+)(?:-\d+.)?/)
+          }
           if (!userIdMatch) {
-            userIdMatch = user.url.match(/people\/(\d+)/)
+            if (user.url) {
+              userIdMatch = user.url.match(/people\/(\d+)/)
+            }
             if (!userIdMatch) {
               return
             }
@@ -299,7 +330,7 @@
         console.log('Result, here, userList:', userList)
         return userList
       },
-      async getUserDetailOfUserList(userList) {
+      async getUserDetailOfUserList(userList: Array<User>) {
         if (!userList) {
           return
         }
@@ -318,15 +349,15 @@
           ++i
         }
       },
-      async getUserDetail(user) {
+      async getUserDetail(user: User) {
         const that = this
         const accessToken = this.user.accessToken
 
         if (!user || !user.id) {
-          return
+          return null
         }
 
-        let data = await fetchGetUserInfo({
+        let data: any = await fetchGetUserInfo({
           accessToken,
           userId: user.id
         })
@@ -372,9 +403,10 @@
             return user
           }
         }
+        return null
       }
     }
-  }
+  })
 </script>
 
 <style lang="scss">

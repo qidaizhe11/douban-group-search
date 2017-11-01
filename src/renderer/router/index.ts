@@ -15,19 +15,19 @@ export default new Router({
       name: 'index',
       component: require('@/views/Index.vue').default
     },
-    // {
-    //   path: '/result',
-    //   name: 'result',
-    //   component: require('views/Result').default
-    // },
+    {
+      path: '/result',
+      name: 'result',
+      component: require('views/Result.vue').default
+    },
     {
       path: '/login',
       name: 'login',
       component: require('views/Login.vue').default
     },
-    // {
-    //   path: '*',
-    //   redirect: '/'
-    // }
+    {
+      path: '*',
+      redirect: '/'
+    }
   ]
 })
