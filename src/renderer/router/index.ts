@@ -20,11 +20,11 @@ export default new Router({
     //   name: 'result',
     //   component: require('views/Result').default
     // },
-    // {
-    //   path: '/login',
-    //   name: 'login',
-    //   component: require('views/Login').default
-    // },
+    {
+      path: '/login',
+      name: 'login',
+      component: require('views/Login.vue').default
+    },
     // {
     //   path: '*',
     //   redirect: '/'

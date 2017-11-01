@@ -19,10 +19,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+  import Vue from 'vue'
   import { FETCH_POST_LOGIN } from 'store/mutation-types'
 
-  export default {
+  export default Vue.extend({
     data() {
       return {
         ruleForm: {
@@ -41,7 +42,8 @@
     },
     methods: {
       login() {
-        this.$refs.ruleForm.validate((valid) => {
+        const formRef: any = this.$refs.ruleForm
+        formRef.validate((valid: boolean) => {
           if (!valid) {
             return
           }
@@ -53,7 +55,7 @@
         })
       }
     }
-  }
+  })
 </script>
 
 <style lang="scss">
