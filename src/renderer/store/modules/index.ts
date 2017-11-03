@@ -3,9 +3,9 @@
  * in a one-shot manner. There should not be any reason to edit this file.
  */
 
- interface ModulesMap {
-   [key: string]: any
- }
+interface ModulesMap {
+  [key: string]: any
+}
 
 const files = require.context('.', false, /\.ts$/)
 const modules: ModulesMap = {}

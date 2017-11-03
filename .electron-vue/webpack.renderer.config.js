@@ -3,9 +3,7 @@
 process.env.BABEL_ENV = 'renderer'
 
 const path = require('path')
-const {
-  dependencies
-} = require('../package.json')
+const { dependencies } = require('../package.json')
 const webpack = require('webpack')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
@@ -29,7 +27,9 @@ let rendererConfig = {
     renderer: path.join(__dirname, '../src/renderer/main.ts')
   },
   externals: [
-    ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
+    ...Object.keys(dependencies || {}).filter(
+      d => !whiteListedModules.includes(d)
+    )
   ],
   module: {
     rules: [
@@ -44,6 +44,12 @@ let rendererConfig = {
       //     }
       //   }
       // },
+      {
+        test: /\.ts$/,
+        loader: 'tslint-loader',
+        enforce: 'pre',
+        exclude: /node_modules/
+      },
       {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
@@ -72,7 +78,8 @@ let rendererConfig = {
             extractCSS: process.env.NODE_ENV === 'production',
             loaders: {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
-              scss: 'vue-style-loader!css-loader!sass-loader'
+              scss: 'vue-style-loader!css-loader!sass-loader',
+              ts: ['ts-loader', 'tslint-loader']
             }
           }
         }
@@ -82,7 +89,7 @@ let rendererConfig = {
         loader: 'ts-loader',
         exclude: /node_modules/,
         options: {
-          appendTsSuffixTo: [/\.vue$/],
+          appendTsSuffixTo: [/\.vue$/]
         }
       },
       {
@@ -129,8 +136,10 @@ let rendererConfig = {
         removeAttributeQuotes: true,
         removeComments: true
       },
-      nodeModules: process.env.NODE_ENV !== 'production' ?
-        path.resolve(__dirname, '../node_modules') : false
+      nodeModules:
+        process.env.NODE_ENV !== 'production'
+          ? path.resolve(__dirname, '../node_modules')
+          : false
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
@@ -143,13 +152,13 @@ let rendererConfig = {
   resolve: {
     alias: {
       '@': path.join(__dirname, '../src/renderer'),
-      'vue$': 'vue/dist/vue.esm.js',
-      'views': path.join(__dirname, '../src/renderer/views'),
-      'components': path.join(__dirname, '../src/renderer/components'),
-      'api': path.join(__dirname, '../src/renderer/api'),
-      'store': path.join(__dirname, '../src/renderer/store'),
-      'router': path.join(__dirname, '../src/renderer/router'),
-      'config': path.join(__dirname, '../src/renderer/config')
+      vue$: 'vue/dist/vue.esm.js',
+      views: path.join(__dirname, '../src/renderer/views'),
+      components: path.join(__dirname, '../src/renderer/components'),
+      api: path.join(__dirname, '../src/renderer/api'),
+      store: path.join(__dirname, '../src/renderer/store'),
+      router: path.join(__dirname, '../src/renderer/router'),
+      config: path.join(__dirname, '../src/renderer/config')
     },
     extensions: ['.js', '.ts', '.vue', '.json', '.css', '.node']
   },
@@ -162,7 +171,7 @@ let rendererConfig = {
 if (process.env.NODE_ENV !== 'production') {
   rendererConfig.plugins.push(
     new webpack.DefinePlugin({
-      '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`
+      __static: `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`
     })
   )
 }
@@ -175,11 +184,13 @@ if (process.env.NODE_ENV === 'production') {
 
   rendererConfig.plugins.push(
     new BabiliWebpackPlugin(),
-    new CopyWebpackPlugin([{
-      from: path.join(__dirname, '../static'),
-      to: path.join(__dirname, '../dist/electron/static'),
-      ignore: ['.*']
-    }]),
+    new CopyWebpackPlugin([
+      {
+        from: path.join(__dirname, '../static'),
+        to: path.join(__dirname, '../dist/electron/static'),
+        ignore: ['.*']
+      }
+    ]),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
     }),

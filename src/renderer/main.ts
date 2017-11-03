@@ -17,7 +17,7 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
+/* tslint:disable no-unused-expression */
 new Vue({
   el: '#app',
   components: {
@@ -27,3 +27,4 @@ new Vue({
   store,
   template: '<App/>'
 })
+/* tslint:enable */
