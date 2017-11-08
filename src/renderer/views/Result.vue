@@ -160,7 +160,8 @@
         current: {
           total: 0,
           current: 0
-        }
+        },
+        userList: []
       }
     },
     computed: {
@@ -334,8 +335,6 @@
         if (!userList) {
           return
         }
-
-        this.userList = userList
 
         this.current = {
           total: userList.length,

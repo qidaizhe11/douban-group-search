@@ -22,6 +22,8 @@
 <script lang="ts">
   import Vue from 'vue'
   import { FETCH_POST_LOGIN } from 'store/mutation-types'
+  import { PostLoginParams } from 'api/declarations'
+  import { dispatchUserPostLogin } from 'store/index'
 
   export default Vue.extend({
     data() {
@@ -31,12 +33,8 @@
           password: ''
         },
         rules: {
-          account: [
-            { required: true, message: '请输入豆瓣账号', trigger: 'blur' }
-          ],
-          password: [
-            { required: true, message: '请输入密码', trigger: 'blur' }
-          ]
+          account: [{ required: true, message: '请输入豆瓣账号', trigger: 'blur' }],
+          password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
         }
       }
     },
@@ -48,9 +46,18 @@
             return
           }
 
-          this.$store.dispatch(FETCH_POST_LOGIN, {
+          const payload: PostLoginParams = {
             account: this.ruleForm.account,
             password: this.ruleForm.password
+          }
+
+          this.$store.dispatch(FETCH_POST_LOGIN, payload)
+
+          dispatchUserPostLogin({
+            account: this.ruleForm.account,
+            password: this.ruleForm.password
+          }).then(() => {
+            console.log('hehe')
           })
         })
       }

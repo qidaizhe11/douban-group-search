@@ -36,8 +36,10 @@
 
 <script lang="ts">
   import Vue from 'vue'
-  import { mapState } from 'vuex'
-  import { State } from 'store/declarations'
+  // import { mapState } from 'vuex'
+  // import { State } from 'store/declarations'
+  
+  import { UserState } from 'store/modules/user'
 
   import router from 'router'
   import store from 'store/index'
@@ -57,9 +59,12 @@
       }
     },
     computed: {
-      ...mapState({
-        user: (state: State) => state.user
-      })
+      // ...mapState({
+      //   user: (state: State) => state.user
+      // })
+      user(): UserState {
+        return this.$store.state.user
+      }
     },
     mounted() {
       // const that = this
