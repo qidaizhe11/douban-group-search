@@ -1,6 +1,12 @@
 <template>
   <div class="page-container">
     <div class="content-container">
+      <div class="type-container">
+        <el-radio-group v-model="type">
+          <el-radio-button label="groupUser">小组用户</el-radio-button>
+          <el-radio-button label="groupPost">小组话题</el-radio-button>
+        </el-radio-group>
+      </div>
       <div class="title-container">
         <el-input placeholder="请输入小组网址" v-model="title">
           <el-select slot="prepend" class="title-type-select" v-model="type" placeholder="请选择">
@@ -15,13 +21,17 @@
         <div class="filter-text">
           筛选条件：
         </div>
-        <div class="filter-content">
+        <div class="filter-content" v-show="type === 'groupUser'">
           <!-- <el-radio-group class="filter-sex" v-model="sex">
-                        <el-radio label="male">男</el-radio>
-                        <el-radio label="female">女</el-radio>
-                        <el-radio label="all">男女不限</el-radio>
-                      </el-radio-group> -->
+                            <el-radio label="male">男</el-radio>
+                            <el-radio label="female">女</el-radio>
+                            <el-radio label="all">男女不限</el-radio>
+                          </el-radio-group> -->
           <el-input class="filter-city" placeholder="城市" v-model="city">
+          </el-input>
+        </div>
+        <div class="filter-content" v-show="type === 'groupPost'">
+          <el-input class="filter-offset" placeholder="查询起始数" v-model="offset">
           </el-input>
         </div>
       </div>
@@ -38,7 +48,7 @@
   import Vue from 'vue'
   // import { mapState } from 'vuex'
   // import { State } from 'store/declarations'
-  
+
   import { UserState } from 'store/modules/user'
 
   import router from 'router'
@@ -52,10 +62,11 @@
   export default Vue.extend({
     data() {
       return {
-        type: 'group',
+        type: 'groupPost',
         title: 'https://www.douban.com/group/mini150cm/',
         sex: 'all',
-        city: '郑州'
+        city: '郑州',
+        offset: ''
       }
     },
     computed: {
