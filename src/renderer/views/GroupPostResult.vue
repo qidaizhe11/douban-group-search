@@ -2,8 +2,8 @@
   <div class="page-container">
     <div class="filter-container">
       <el-button size="mini" @click="onReturnClick">返回主页</el-button>
-      <el-tag type="success">{{params.title}}</el-tag>
-      <el-tag type="success">{{params.city}}</el-tag>
+      <!-- <el-tag type="success">{{params.title}}</el-tag> -->
+      <!-- <el-tag type="success">{{params.city}}</el-tag> -->
     </div>
     <div class="tooltip-container" v-if="total > 0">
       <span class="total-text">共{{total}}条结果</span>
