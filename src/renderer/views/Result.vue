@@ -278,7 +278,7 @@
               console.log('Result, request success, res:', res)
               const $ = cheerio.load(res.text)
               const $memberList = $('.member-list li')
-              const userList: Array<object> = []
+              const userList: User[] = []
               $memberList.each((i: number, value: any) => {
                 const member = $(value)
                 const user: User = {}
