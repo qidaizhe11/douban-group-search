@@ -19,13 +19,13 @@
         <template slot-scope="scope" slot="name-slot">
           <div class="name-container">
             <div class="avatar-container">
-              <img :src="scope.row.imageUrl" class="avatar"></img>
+              <img :src="scope.row.author.imageUrl" class="avatar"></img>
             </div>
-            <span>{{scope.row.name}}</span>
+            <span>{{scope.row.author.name}}</span>
           </div>
         </template>
         <template slot-scope="scope" slot="url-slot">
-          <el-button type="text" @click="onUserUrlClick(scope.row.url)">主页</el-button>
+          <el-button type="text" @click="onUserUrlClick(scope.row.author.url)">主页</el-button>
         </template>
       </el-table-wrapper>
     </div>
@@ -50,7 +50,8 @@
     fetchGetGroupMembers,
     fetchGetUserInfo,
     fetchGetUserLifeStream,
-    fetchGetUserLifeStreamTimeSlices
+    fetchGetUserLifeStreamTimeSlices,
+    fetchGetGroupTopics
   } from 'api'
   import { SPIDER_USER_AGENT } from 'config'
 
@@ -80,69 +81,109 @@
     latestStreamTimeShow?: string
   }
 
+  interface GroupTopicOriginal {
+    id: string,
+    title: string,
+    create_time: string,
+    update_time: string,
+    url: string,
+    cover_url: string,
+    comments_count: number,
+    author: {
+      avatar: string,
+      gender: string,
+      id: string,
+      name: string,
+      reg_time: string
+    }
+  }
+
+  interface GroupTopic {
+    id: string,
+    title: string,
+    createTime: string,
+    updateTime?: string,
+    url: string,
+    coverUrl?: string,
+    commentsCount: number,
+    author?: User
+  }
+
   export default Vue.extend({
     data() {
-      const tableData: User[] = []
+      const tableData: GroupTopic[] = []
       return {
         tableData: tableData,
         tableColumns: [
           {
-            prop: 'name',
+            prop: 'title',
+            label: '标题',
+            // width: 200,
+            searchable: true
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            width: 180,
+            searchable: true
+          },
+          {
+            // prop: 'author.name',
             label: '昵称',
             scopedSlot: 'name-slot',
             searchable: true,
             width: 180,
             showOverflowTooltip: true
           },
+          // {
+          //   prop: 'introduction',
+          //   label: '简介',
+          //   searchable: true
+          // },
           {
-            prop: 'introduction',
-            label: '简介',
-            searchable: true
-          },
-          {
-            prop: 'gender',
+            prop: 'author.gender',
             label: '性别',
             width: 80,
             searchable: true
           },
+          // {
+          //   prop: 'city',
+          //   label: '城市',
+          //   width: 100,
+          //   searchable: true
+          // },
+          // {
+          //   prop: 'followingCount',
+          //   label: '关注',
+          //   width: 100,
+          //   sortable: true
+          // },
+          // {
+          //   prop: 'followersCount',
+          //   label: '关注者',
+          //   width: 120,
+          //   sortable: true
+          // },
+          // {
+          //   prop: 'joinedGroupCount',
+          //   label: '加入小组',
+          //   width: 120,
+          //   sortable: true
+          // },
+          // {
+          //   prop: 'latestStreamTimeShow',
+          //   label: '最近活跃时间',
+          //   width: 180,
+          //   sortable: true
+          // },
+          // {
+          //   prop: 'registerTimeShow',
+          //   label: '注册时间',
+          //   width: 180,
+          //   sortable: true
+          // },
           {
-            prop: 'city',
-            label: '城市',
-            width: 100,
-            searchable: true
-          },
-          {
-            prop: 'followingCount',
-            label: '关注',
-            width: 100,
-            sortable: true
-          },
-          {
-            prop: 'followersCount',
-            label: '关注者',
-            width: 120,
-            sortable: true
-          },
-          {
-            prop: 'joinedGroupCount',
-            label: '加入小组',
-            width: 120,
-            sortable: true
-          },
-          {
-            prop: 'latestStreamTimeShow',
-            label: '最近活跃时间',
-            width: 180,
-            sortable: true
-          },
-          {
-            prop: 'registerTimeShow',
-            label: '注册时间',
-            width: 180,
-            sortable: true
-          },
-          {
-            prop: 'url',
+            prop: 'author.url',
             label: '主页',
             width: 100,
             scopedSlot: 'url-slot'
@@ -201,6 +242,14 @@
 
       console.log('GroupPostResult, mounted, groupId:', groupId)
 
+      if (groupId) {
+        const groupTopics = await this.getGroupTopics(groupId, 0)
+
+        if (groupTopics && groupTopics.length > 0) {
+          this.tableData = groupTopics
+        }
+      }
+
       // const pages = Math.floor((this.total - 1) / this.pageSize + 1)
       // const pages = 1
       // let start = 0
@@ -252,6 +301,40 @@
             })
         })
       },
+      async getGroupTopics(groupId: string, start: number) {
+        const accessToken = this.user.accessToken
+        const data: any = await fetchGetGroupTopics({
+          accessToken,
+          groupId,
+          start
+        })
+
+        const topicOriginalList: GroupTopicOriginal[] = data.topics
+
+        if (topicOriginalList) {
+          const topicList: GroupTopic[] = topicOriginalList.map(topicOriginal => {
+            const authorOriginal = topicOriginal.author
+            const author: User = {
+              name: authorOriginal.name,
+              imageUrl: authorOriginal.avatar,
+              gender: authorOriginal.gender
+            }
+            const topic: GroupTopic = {
+              id: topicOriginal.id,
+              title: topicOriginal.title,
+              url: topicOriginal.url,
+              coverUrl: topicOriginal.cover_url,
+              commentsCount: topicOriginal.comments_count,
+              createTime: topicOriginal.create_time,
+              updateTime: topicOriginal.update_time,
+              author: author
+            }
+            return topic
+          })
+          return topicList
+        }
+        return []
+      },
       getGroupUsersFilterByCity(url: string) {
         return new Promise<Array<User>>((resolve, reject) => {
           request
@@ -290,32 +373,6 @@
               resolve(userList)
             })
         })
-      },
-      addUserIdOfUserList(userList: Array<User>) {
-        if (!userList) {
-          return
-        }
-
-        userList.map((user: User, i: number) => {
-          let userIdMatch: RegExpMatchArray | null = null
-          if (user.imageUrl) {
-            userIdMatch = user.imageUrl.match(/icon\/u(\d+)(?:-\d+.)?/)
-          }
-          if (!userIdMatch) {
-            if (user.url) {
-              userIdMatch = user.url.match(/people\/(\d+)/)
-            }
-            if (!userIdMatch) {
-              return
-            }
-          }
-          if (userIdMatch.length > 1) {
-            user.id = userIdMatch[1]
-          }
-        })
-
-        console.log('Result, here, userList:', userList)
-        return userList
       },
       async getUserDetailOfUserList(userList: Array<User>) {
         if (!userList) {
@@ -384,7 +441,7 @@
             }
 
             that.current.current = that.current.current + 1
-            that.tableData.push(user)
+            // that.tableData.push(user)
             return user
           }
         }

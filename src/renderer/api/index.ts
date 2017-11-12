@@ -12,7 +12,19 @@ const commonParams = {
   udid: '8a2a02080cd222dfd017d22833736a7ee3a9bae5'
 }
 
-export function fetchGetGroupMembers(params: any) {
+interface Params {
+  accessToken: string
+}
+
+interface UserIdParams extends Params {
+  userId: string
+}
+
+interface GroupIdParams extends Params {
+  groupId: string
+}
+
+export function fetchGetGroupMembers(params: GroupIdParams) {
   // if (!params.groupId) {
   //   return
   // }
@@ -30,7 +42,7 @@ export function fetchGetGroupMembers(params: any) {
   })
 }
 
-export function fetchGetUserInfo(params: any) {
+export function fetchGetUserInfo(params: UserIdParams) {
   if (!params.userId) {
     return
   }
@@ -46,7 +58,7 @@ export function fetchGetUserInfo(params: any) {
   })
 }
 
-export function fetchGetUserLifeStreamTimeSlices(params: any) {
+export function fetchGetUserLifeStreamTimeSlices(params: UserIdParams) {
   if (!params.userId) {
     return
   }
@@ -75,6 +87,25 @@ export function fetchGetUserLifeStream(params: any) {
     params: {
       count: 20,
       slice: params.slice,
+      ...commonParams
+    }
+  })
+}
+
+interface GetGroupTopicsParams extends GroupIdParams {
+  start: number
+}
+
+export function fetchGetGroupTopics(params: GetGroupTopicsParams) {
+  return fetch.request({
+    url: `/api/v2/group/${params.groupId}/topics`,
+    method: 'get',
+    headers: {
+      Authorization: 'Bearer ' + params.accessToken
+    },
+    params: {
+      count: 30,
+      start: params.start,
       ...commonParams
     }
   })
