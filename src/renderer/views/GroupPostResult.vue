@@ -14,8 +14,8 @@
       <!-- </div> -->
     </div>
     <div class="table-container">
-      <el-table-wrapper ref="table" border stripe :data="tableData" :columns="tableColumns"
-        :pagination="tablePagination" :show-custom-header="true">
+      <!-- <el-table-wrapper ref="table" border stripe :data="tableData" :columns="tableColumns"
+        :pagination="tablePagination" :show-custom-header="false">
         <template slot-scope="scope" slot="name-slot">
           <div class="name-container">
             <div class="avatar-container">
@@ -27,7 +27,13 @@
         <template slot-scope="scope" slot="url-slot">
           <el-button type="text" @click="onUserUrlClick(scope.row.author.url)">主页</el-button>
         </template>
-      </el-table-wrapper>
+      </el-table-wrapper> -->
+      <el-table border stripe :data="tableData">
+        <el-table-column prop="author.introduction" width="200" label="用户简介" show-overflow-tooltip="true">
+        </el-table-column>
+        <el-table-column prop="author.name" label="昵称">
+        </el-table-column>
+      </el-table>
     </div>
     <div class="pagination-container">
     </div>
@@ -119,73 +125,87 @@
             prop: 'title',
             label: '标题',
             // width: 200,
+            minWidth: 150,
             searchable: true
           },
           {
             prop: 'createTime',
-            label: '创建时间',
-            width: 180,
+            label: '发表时间',
+            width: 150,
             searchable: true
+          },
+          {
+            prop: 'updateTime',
+            label: '更新时间',
+            width: 150,
+            searchable: true
+          },
+          {
+            prop: 'commentsCount',
+            label: '回复数',
+            width: 50
           },
           {
             // prop: 'author.name',
-            label: '昵称',
+            label: '用户昵称',
             scopedSlot: 'name-slot',
             searchable: true,
-            width: 180,
+            width: 150,
             showOverflowTooltip: true
           },
-          // {
-          //   prop: 'introduction',
-          //   label: '简介',
-          //   searchable: true
-          // },
+          {
+            prop: 'author.introduction',
+            label: '用户简介',
+            minWidth: 200,
+            showOverflowTooltip: true,
+            searchable: true
+          },
           {
             prop: 'author.gender',
             label: '性别',
+            width: 50,
+            searchable: true
+          },
+          {
+            prop: 'author.location.name',
+            label: '城市',
             width: 80,
             searchable: true
           },
-          // {
-          //   prop: 'city',
-          //   label: '城市',
-          //   width: 100,
-          //   searchable: true
-          // },
-          // {
-          //   prop: 'followingCount',
-          //   label: '关注',
-          //   width: 100,
-          //   sortable: true
-          // },
-          // {
-          //   prop: 'followersCount',
-          //   label: '关注者',
-          //   width: 120,
-          //   sortable: true
-          // },
-          // {
-          //   prop: 'joinedGroupCount',
-          //   label: '加入小组',
-          //   width: 120,
-          //   sortable: true
-          // },
-          // {
-          //   prop: 'latestStreamTimeShow',
-          //   label: '最近活跃时间',
-          //   width: 180,
-          //   sortable: true
-          // },
-          // {
-          //   prop: 'registerTimeShow',
-          //   label: '注册时间',
-          //   width: 180,
-          //   sortable: true
-          // },
+          {
+            prop: 'author.followingCount',
+            label: '关注',
+            width: 50,
+            sortable: true
+          },
+          {
+            prop: 'author.followersCount',
+            label: '关注者',
+            width: 50,
+            sortable: true
+          },
+          {
+            prop: 'author.joinedGroupCount',
+            label: '加入小组',
+            width: 50,
+            sortable: true
+          },
+          {
+            prop: 'author.latestStreamTimeShow',
+            label: '最近活跃时间',
+            width: 100,
+            sortable: true
+          },
+          {
+            prop: 'author.registerTimeShow',
+            label: '注册时间',
+            width: 100,
+            sortable: true
+          },
           {
             prop: 'author.url',
-            label: '主页',
-            width: 100,
+            label: '用户主页',
+            width: 70,
             scopedSlot: 'url-slot'
           }
         ],
@@ -246,7 +266,23 @@
         const groupTopics = await this.getGroupTopics(groupId, 0)
 
         if (groupTopics && groupTopics.length > 0) {
-          this.tableData = groupTopics
+          // this.tableData = groupTopics
+          for (let i = 0; i < groupTopics.length; ++i) {
+            const topic = groupTopics[i]
+            let user = Object.assign({}, topic.author)
+
+            const userReturn = await this.getUserDetail(user)
+            topic.author = userReturn || {}
+            this.tableData.push(topic)
+          }
+          // this.tableData = groupTopics.map(topic => {
+          //   // const user = topic.author
+          //   let user = Object.assign({}, topic.author)
+
+          //   const userReturn = await this.getUserDetail(user)
+          //   topic.author = userReturn || {}
+          //   return topic
+          // })
         }
       }
 
@@ -315,6 +351,7 @@
           const topicList: GroupTopic[] = topicOriginalList.map(topicOriginal => {
             const authorOriginal = topicOriginal.author
             const author: User = {
+              id: authorOriginal.id,
               name: authorOriginal.name,
               imageUrl: authorOriginal.avatar,
               gender: authorOriginal.gender
@@ -414,9 +451,9 @@
             .slice(0, 10)
           user.gender = data.gender
           user.location = {
-            id: data.loc.id,
-            name: data.loc.name,
-            uid: data.loc.uid
+            id: data.loc ? data.loc.id : '',
+            name: data.loc ? data.loc.name : '',
+            uid: data.loc ? data.loc.uid : ''
           }
           user.introduction = data.intro.substring(0, 200)
         }
@@ -455,6 +492,12 @@
   .el-progress.current-percent {
     .el-progress-bar__inner {
       background-color: #20a0ff;
+    }
+  }
+
+  .table-container {
+    .el-table {
+      font-size: 12px;
     }
   }
 </style>
