@@ -94,7 +94,8 @@
           type: 'group'
         }
         store.dispatch(SET_SEARCH_PARAMS, params).then(() => {
-          router.push('/result')
+          // router.push('/result')
+          router.push('/result/group-posts')
         })
       }
     }

@@ -41,7 +41,7 @@
   import request from 'superagent'
   import cheerio from 'cheerio'
   import ElTableWrapper from 'element-table-wrapper'
-  import _ from 'lodash'
+  // import _ from 'lodash'
 
   import router from 'router'
   import { INIT_USRE_INFO_FROM_STORAGE } from 'store/mutation-types'
@@ -193,29 +193,28 @@
         return
       }
 
-      const url =
-        _.trimEnd(this.params.title, '/') +
-        '/member_search?search_text=' +
-        encodeURIComponent(this.params.city)
+      const url = this.params.title
       if (!url) {
         return
       }
-      await this.getGroupUsersTotal(url)
+      const groupId = await this.getGroupIdByUrl(url)
+
+      console.log('GroupPostResult, mounted, groupId:', groupId)
 
       // const pages = Math.floor((this.total - 1) / this.pageSize + 1)
-      const pages = 1
-      let start = 0
-      for (let i = 0; i < pages;) {
-        this.currentPage = i + 1
-        const currentUrl = url + `&start=${start}`
+      // const pages = 1
+      // let start = 0
+      // for (let i = 0; i < pages;) {
+      //   this.currentPage = i + 1
+      //   const currentUrl = url + `&start=${start}`
 
-        const userList = await this.getGroupUsersFilterByCity(currentUrl)
-        this.addUserIdOfUserList(userList)
+      //   const userList = await this.getGroupUsersFilterByCity(currentUrl)
+      //   this.addUserIdOfUserList(userList)
 
-        await this.getUserDetailOfUserList(userList)
-        start += userList.length
-        ++i
-      }
+      //   await this.getUserDetailOfUserList(userList)
+      //   start += userList.length
+      //   ++i
+      // }
     },
     methods: {
       onReturnClick() {
@@ -234,8 +233,8 @@
           console.log('fetchGetGroupUsers, got data:', data)
         })
       },
-      getGroupUsersTotal(url: string) {
-        return new Promise((resolve, reject) => {
+      getGroupIdByUrl(url: string) {
+        return new Promise<string>((resolve, reject) => {
           request
             .get(url)
             .set('User-Agent', SPIDER_USER_AGENT)
@@ -246,22 +245,10 @@
               }
 
               const $ = cheerio.load(res.text)
-              const totalContents = $('#content .article .wrap h3').contents()
-              console.log('totalContents:', totalContents, typeof totalContents)
-              totalContents.map((i: number, node: any) => {
-                if (node.type === 'text' && /共\d+人/.test(node.data)) {
-                  const totalMatch = node.data.match(/共(\d+)人/)
-                  if (totalMatch.length > 1) {
-                    this.total = totalMatch[1]
-                  }
-                }
-              })
-
-              const memberList = $('.member-list li')
-              if (memberList && memberList.length > 0) {
-                this.pageSize = memberList.length
+              const id = $('.rec-sec .rec a').attr('data-object_id')
+              if (id) {
+                resolve(id)
               }
-              resolve()
             })
         })
       },
