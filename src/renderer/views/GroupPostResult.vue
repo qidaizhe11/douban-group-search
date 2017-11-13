@@ -63,55 +63,55 @@
   Vue.use(ElTableWrapper)
 
   interface UserLocation {
-    id: string,
-    name: string,
+    id: string
+    name: string
     uid: string
   }
 
   interface User {
-    id?: string,
-    name?: string,
-    url?: string,
-    imageUrl?: string,
-    city?: string,
-    gender?: string,
-    location?: UserLocation,
-    introduction?: string,
-    followingCount?: number,
-    followersCount?: number,
-    joinedGroupCount?: number,
-    registerTime?: string,
-    registerTimeShow?: string,
-    latestStreamTime?: Date,
+    id?: string
+    name?: string
+    url?: string
+    imageUrl?: string
+    city?: string
+    gender?: string
+    location?: UserLocation
+    introduction?: string
+    followingCount?: number
+    followersCount?: number
+    joinedGroupCount?: number
+    registerTime?: string
+    registerTimeShow?: string
+    latestStreamTime?: Date
     latestStreamTimeShow?: string
   }
 
   interface GroupTopicOriginal {
-    id: string,
-    title: string,
-    create_time: string,
-    update_time: string,
-    url: string,
-    cover_url: string,
-    comments_count: number,
+    id: string
+    title: string
+    create_time: string
+    update_time: string
+    url: string
+    cover_url: string
+    comments_count: number
     author: {
-      avatar: string,
-      gender: string,
-      id: string,
-      name: string,
-      reg_time: string,
+      avatar: string
+      gender: string
+      id: string
+      name: string
+      reg_time: string
       url: string
     }
   }
 
   interface GroupTopic {
-    id: string,
-    title: string,
-    createTime: string,
-    updateTime?: string,
-    url: string,
-    coverUrl?: string,
-    commentsCount: number,
+    id: string
+    title: string
+    createTime: string
+    updateTime?: string
+    url: string
+    coverUrl?: string
+    commentsCount: number
     author?: User
   }
 
@@ -215,11 +215,11 @@
           pageSizes: [10, 20, 50, 100],
           layout: 'total, sizes, prev, pager, next'
         },
-        total: 0,
-        pageSize: 0,
+        total: 600,
+        pageSize: 30,
         currentPage: 0,
         current: {
-          total: 0,
+          total: 30,
           current: 0
         },
         userList: []
@@ -264,26 +264,33 @@
       console.log('GroupPostResult, mounted, groupId:', groupId)
 
       if (groupId) {
-        const groupTopics = await this.getGroupTopics(groupId, 0)
+        let offset = 0
+        for (let j = 0; j < 20; ++j) {
+          this.currentPage = j + 1
+          const groupTopics = await this.getGroupTopics(groupId, offset)
 
-        if (groupTopics && groupTopics.length > 0) {
-          // this.tableData = groupTopics
-          for (let i = 0; i < groupTopics.length; ++i) {
-            const topic = groupTopics[i]
-            let user = Object.assign({}, topic.author)
+          offset += 30
 
-            const userReturn = await this.getUserDetail(user)
-            topic.author = userReturn || {}
-            this.tableData.push(topic)
+          if (groupTopics && groupTopics.length > 0) {
+            // this.tableData = groupTopics
+            for (let i = 0; i < groupTopics.length; ++i) {
+              const topic = groupTopics[i]
+              let user = Object.assign({}, topic.author)
+
+              const userReturn = await this.getUserDetail(user)
+              topic.author = userReturn || {}
+              this.tableData.push(topic)
+              this.current.current = i
+            }
+            // this.tableData = groupTopics.map(topic => {
+            //   // const user = topic.author
+            //   let user = Object.assign({}, topic.author)
+
+            //   const userReturn = await this.getUserDetail(user)
+            //   topic.author = userReturn || {}
+            //   return topic
+            // })
           }
-          // this.tableData = groupTopics.map(topic => {
-          //   // const user = topic.author
-          //   let user = Object.assign({}, topic.author)
-
-          //   const userReturn = await this.getUserDetail(user)
-          //   topic.author = userReturn || {}
-          //   return topic
-          // })
         }
       }
 
