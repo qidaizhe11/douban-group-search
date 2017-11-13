@@ -25,7 +25,12 @@
           </div>
         </template>
         <template slot-scope="scope" slot="url-slot">
-          <el-button type="text" @click="onUserUrlClick(scope.row.author.url)">主页</el-button>
+          <el-button type="text" @click="onUrlClick(scope.row.author.url)">主页</el-button>
+        </template>
+        <template slot-scope="scope" slot="title-slot">
+          <div class="title-container" @click="onUrlClick(scope.row.url)">
+            {{scope.row.title}}
+          </div>
         </template>
       </el-table-wrapper>
     </div>
@@ -94,7 +99,8 @@
       gender: string,
       id: string,
       name: string,
-      reg_time: string
+      reg_time: string,
+      url: string
     }
   }
 
@@ -120,7 +126,8 @@
             label: '标题',
             // width: 200,
             minWidth: 150,
-            searchable: true
+            searchable: true,
+            scopedSlot: 'title-slot'
           },
           {
             prop: 'createTime',
@@ -299,7 +306,7 @@
       onReturnClick() {
         router.push('/')
       },
-      onUserUrlClick(url: string) {
+      onUrlClick(url: string) {
         shell.openExternal(url)
       },
       getGroupUsers() {
@@ -348,7 +355,8 @@
               id: authorOriginal.id,
               name: authorOriginal.name,
               imageUrl: authorOriginal.avatar,
-              gender: authorOriginal.gender
+              gender: authorOriginal.gender,
+              url: authorOriginal.url
             }
             const topic: GroupTopic = {
               id: topicOriginal.id,
@@ -565,6 +573,11 @@
         width: $size;
         height: $size;
       }
+    }
+
+    .title-container {
+      color: #409eff;
+      cursor: pointer;
     }
   }
 </style>
