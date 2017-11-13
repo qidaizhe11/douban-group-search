@@ -1,13 +1,13 @@
 <template>
   <div class="page-container">
     <div class="filter-container">
-      <el-button size="mini" @click="onReturnClick">返回主页</el-button>
+      <el-button size="mini" class="return-button" @click="onReturnClick">返回主页</el-button>
       <!-- <el-tag type="success">{{params.title}}</el-tag> -->
       <!-- <el-tag type="success">{{params.city}}</el-tag> -->
     </div>
     <div class="tooltip-container" v-if="total > 0">
-      <span class="total-text">共{{total}}条结果</span>
-      <span class="current-text">正在加载第{{currentPage}}页（共{{pages}}页）</span>
+      <el-button class="pause-button" @click="onPauseClick">{{'停止加载'}}</el-button>
+      <span class="total-text">共{{total}}条结果</span <span class="current-text">正在加载第{{currentPage}}页（共{{pages}}页）</span>
       <el-progress :percentage="currentPercent" :show-text="false" class="current-percent"></el-progress>
       <!-- <div class="total-percent"> -->
       <el-progress type="circle" :width="40" :percentage="totalPercent" class="total-percent"></el-progress>
@@ -222,7 +222,8 @@
           total: 30,
           current: 0
         },
-        userList: []
+        userList: [],
+        isPaused: false
       }
     },
     computed: {
@@ -266,14 +267,19 @@
       if (groupId) {
         let offset = 0
         for (let j = 0; j < 20; ++j) {
+          if (this.isPaused) {
+            return
+          }
           this.currentPage = j + 1
           const groupTopics = await this.getGroupTopics(groupId, offset)
 
           offset += 30
 
           if (groupTopics && groupTopics.length > 0) {
-            // this.tableData = groupTopics
             for (let i = 0; i < groupTopics.length; ++i) {
+              if (this.isPaused) {
+                return
+              }
               const topic = groupTopics[i]
               let user = Object.assign({}, topic.author)
 
@@ -282,14 +288,6 @@
               this.tableData.push(topic)
               this.current.current = i
             }
-            // this.tableData = groupTopics.map(topic => {
-            //   // const user = topic.author
-            //   let user = Object.assign({}, topic.author)
-
-            //   const userReturn = await this.getUserDetail(user)
-            //   topic.author = userReturn || {}
-            //   return topic
-            // })
           }
         }
       }
@@ -315,6 +313,10 @@
       },
       onUrlClick(url: string) {
         shell.openExternal(url)
+      },
+      onPauseClick() {
+        // this.isPaused = !this.isPaused
+        this.isPaused = true
       },
       getGroupUsers() {
         const accessToken = this.user.accessToken
@@ -525,6 +527,10 @@
     .el-tag {
       margin-right: 10px;
     }
+
+    .return-button {
+      margin-right: 20px;
+    }
   }
 
   .tooltip-container {
@@ -532,6 +538,10 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+
+    .pause-button {
+      margin-right: 30px;
+    }
 
     .total-text {
       padding-right: 30px;
