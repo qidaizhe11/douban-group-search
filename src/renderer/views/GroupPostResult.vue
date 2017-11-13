@@ -15,7 +15,7 @@
     </div>
     <div class="table-container">
       <el-table-wrapper ref="table" border stripe :data="tableData" :columns="tableColumns"
-        :pagination="tablePagination" :show-custom-header="false">
+        :pagination="tablePagination" :show-custom-header="true">
         <template slot-scope="scope" slot="name-slot">
           <div class="name-container">
             <div class="avatar-container">
@@ -132,18 +132,19 @@
             prop: 'createTime',
             label: '发表时间',
             width: 150,
-            searchable: true
+            sortable: true
           },
           {
             prop: 'updateTime',
             label: '更新时间',
             width: 150,
-            searchable: true
+            sortable: true
           },
           {
             prop: 'commentsCount',
             label: '回复数',
-            width: 50
+            width: 50,
+            sortable: true
           },
           {
             // prop: 'author.name',
