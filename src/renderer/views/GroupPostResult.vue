@@ -52,7 +52,6 @@
   import { INIT_USRE_INFO_FROM_STORAGE } from 'store/mutation-types'
   import { State } from 'store/declarations'
   import {
-    fetchGetGroupMembers,
     fetchGetUserInfo,
     fetchGetUserLifeStream,
     fetchGetUserLifeStreamTimeSlices,
@@ -291,21 +290,6 @@
           }
         }
       }
-
-      // const pages = Math.floor((this.total - 1) / this.pageSize + 1)
-      // const pages = 1
-      // let start = 0
-      // for (let i = 0; i < pages;) {
-      //   this.currentPage = i + 1
-      //   const currentUrl = url + `&start=${start}`
-
-      //   const userList = await this.getGroupUsersFilterByCity(currentUrl)
-      //   this.addUserIdOfUserList(userList)
-
-      //   await this.getUserDetailOfUserList(userList)
-      //   start += userList.length
-      //   ++i
-      // }
     },
     methods: {
       onReturnClick() {
@@ -317,16 +301,6 @@
       onPauseClick() {
         // this.isPaused = !this.isPaused
         this.isPaused = true
-      },
-      getGroupUsers() {
-        const accessToken = this.user.accessToken
-
-        fetchGetGroupMembers({
-          accessToken,
-          groupId: this.params.id
-        }).then(data => {
-          console.log('fetchGetGroupUsers, got data:', data)
-        })
       },
       getGroupIdByUrl(url: string) {
         return new Promise<string>((resolve, reject) => {
@@ -382,62 +356,6 @@
           return topicList
         }
         return []
-      },
-      getGroupUsersFilterByCity(url: string) {
-        return new Promise<Array<User>>((resolve, reject) => {
-          request
-            .get(url)
-            .set('User-Agent', SPIDER_USER_AGENT)
-            .end((err: any, res: any) => {
-              if (err) {
-                console.log('Result, request error:', err)
-              }
-              console.log('Result, request success, res:', res)
-              const $ = cheerio.load(res.text)
-              const $memberList = $('.member-list li')
-              const userList: User[] = []
-              $memberList.each((i: number, value: any) => {
-                const member = $(value)
-                const user: User = {}
-                const memberNameNode = member.find('.name a').first()
-                if (memberNameNode) {
-                  user.name = memberNameNode.text()
-                  user.url = memberNameNode.attr('href')
-                }
-                const memberImageNode = member.find('.pic a img').first()
-                if (memberImageNode) {
-                  user.imageUrl = memberImageNode.attr('src')
-                }
-                const memberCityNode = member.find('.pl').first()
-                if (memberCityNode) {
-                  user.city = memberCityNode
-                    .text()
-                    .replace('(', '')
-                    .replace(')', '')
-                }
-                userList.push(user)
-              })
-              console.log('Result, http get end, member list:', userList)
-              resolve(userList)
-            })
-        })
-      },
-      async getUserDetailOfUserList(userList: Array<User>) {
-        if (!userList) {
-          return
-        }
-
-        this.current = {
-          total: userList.length,
-          current: 0
-        }
-
-        let i = 0
-        while (i < userList.length) {
-          const user = userList[i]
-          await this.getUserDetail(user)
-          ++i
-        }
       },
       async getUserDetail(user: User) {
         const that = this
