@@ -14,7 +14,7 @@
       <!-- </div> -->
     </div>
     <div class="table-container">
-      <!-- <el-table-wrapper ref="table" border stripe :data="tableData" :columns="tableColumns"
+      <el-table-wrapper ref="table" border stripe :data="tableData" :columns="tableColumns"
         :pagination="tablePagination" :show-custom-header="false">
         <template slot-scope="scope" slot="name-slot">
           <div class="name-container">
@@ -27,13 +27,7 @@
         <template slot-scope="scope" slot="url-slot">
           <el-button type="text" @click="onUserUrlClick(scope.row.author.url)">主页</el-button>
         </template>
-      </el-table-wrapper> -->
-      <el-table border stripe :data="tableData">
-        <el-table-column prop="author.introduction" width="200" label="用户简介" show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column prop="author.name" label="昵称">
-        </el-table-column>
-      </el-table>
+      </el-table-wrapper>
     </div>
     <div class="pagination-container">
     </div>
@@ -157,7 +151,7 @@
             prop: 'author.introduction',
             label: '用户简介',
             minWidth: 200,
-            showOverflowTooltip: true,
+            // showOverflowTooltip: true,
             searchable: true
           },
           {
@@ -455,7 +449,7 @@
             name: data.loc ? data.loc.name : '',
             uid: data.loc ? data.loc.uid : ''
           }
-          user.introduction = data.intro.substring(0, 200)
+          user.introduction = data.intro.substring(0, 100)
         }
 
         data = await fetchGetUserLifeStreamTimeSlices({

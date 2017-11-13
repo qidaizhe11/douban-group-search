@@ -19,7 +19,6 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "test": "npm run unit && npm run e2e",
     "unit": "karma start test/unit/karma.conf.js",
-    "postinstall": "npm run lint:fix",
     "theme": "et -c ./src/renderer/style/element-variables.css -o ./src/renderer/style/theme"
   },
   "build": {
@@ -60,7 +59,7 @@
     "axios": "^0.16.1",
     "cheerio": "^1.0.0-rc.2",
     "element-table-wrapper": "^2.0.1",
-    "element-ui": "^2.0.3",
+    "element-ui": "^2.0.4",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "normalize.css": "^7.0.0",
