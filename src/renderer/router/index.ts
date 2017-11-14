@@ -23,7 +23,7 @@ export default new Router({
     {
       path: '/result/group-posts',
       name: 'group-posts-result',
-      component: require('views/GroupPostResult.vue').default
+      component: require('views/GroupTopicResult.vue').default
     },
     {
       path: '/login',
