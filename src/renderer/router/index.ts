@@ -21,7 +21,7 @@ export default new Router({
       component: require('views/Result.vue').default
     },
     {
-      path: '/result/group-posts',
+      path: '/result/group-topics',
       name: 'group-posts-result',
       component: require('views/GroupTopicResult.vue').default
     },

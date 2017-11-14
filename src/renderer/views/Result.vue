@@ -1,12 +1,13 @@
 <template>
   <div class="page-container">
     <div class="filter-container">
-      <el-button size="mini" @click="onReturnClick">返回主页</el-button>
+      <el-button size="mini" class="return-button" @click="onReturnClick">返回主页</el-button>
       <el-tag type="success">{{params.title}}</el-tag>
       <!-- <el-tag type="success">{{params.sex}}</el-tag> -->
       <el-tag type="success">{{params.city}}</el-tag>
     </div>
     <div class="tooltip-container" v-if="total > 0">
+      <el-button class="pause-button" @click="onPauseClick">{{'停止加载'}}</el-button>
       <span class="total-text">共{{total}}条结果</span>
       <span class="current-text">正在加载第{{currentPage}}页（共{{pages}}页）</span>
       <el-progress :percentage="currentPercent" :show-text="false" class="current-percent"></el-progress>
@@ -161,7 +162,8 @@
           total: 0,
           current: 0
         },
-        userList: []
+        userList: [],
+        isPaused: false
       }
     },
     computed: {
@@ -203,9 +205,13 @@
       }
       await this.getGroupUsersTotal(url)
 
+      this.tableData = []
       const pages = Math.floor((this.total - 1) / this.pageSize + 1)
       let start = 0
       for (let i = 0; i < pages;) {
+        if (this.isPaused) {
+          return
+        }
         this.currentPage = i + 1
         const currentUrl = url + `&start=${start}`
 
@@ -223,6 +229,9 @@
       },
       onUserUrlClick(url: string) {
         shell.openExternal(url)
+      },
+      onPauseClick() {
+        this.isPaused = true
       },
       getGroupUsers() {
         const accessToken = this.user.accessToken
@@ -342,6 +351,9 @@
 
         let i = 0
         while (i < userList.length) {
+          if (this.isPaused) {
+            return
+          }
           const user = userList[i]
           await this.getUserDetail(user)
           ++i
@@ -370,9 +382,9 @@
             .slice(0, 10)
           user.gender = data.gender
           user.location = {
-            id: data.loc.id,
-            name: data.loc.name,
-            uid: data.loc.uid
+            id: data.loc ? data.loc.id : '',
+            name: data.loc ? data.loc.name : '',
+            uid: data.loc ? data.loc.uid : ''
           }
           user.introduction = data.intro.substring(0, 200)
         }
@@ -429,6 +441,10 @@
     .el-tag {
       margin-right: 10px;
     }
+
+    .return-button {
+      margin-right: 20px;
+    }
   }
 
   .tooltip-container {
@@ -436,6 +452,10 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+
+    .pause-button {
+      margin-right: 30px;
+    }
 
     .total-text {
       padding-right: 30px;

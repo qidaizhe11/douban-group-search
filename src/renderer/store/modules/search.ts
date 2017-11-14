@@ -3,9 +3,10 @@ import * as types from 'store/mutation-types'
 import { ActionContext } from 'store/declarations'
 
 export interface SearchParams {
-  type: 'group',
+  type: 'groupUser' | 'groupTopic',
   title: string,
-  city: string
+  city?: string,
+  offset?: number
 }
 
 export interface SearchState {
@@ -14,9 +15,10 @@ export interface SearchState {
 
 const state: SearchState = {
   params: {
-    type: 'group',
+    type: 'groupUser',
     title: '',
-    city: ''
+    city: '',
+    offset: 0
   }
 }
 

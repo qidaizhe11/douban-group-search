@@ -2,8 +2,8 @@
   <div class="page-container">
     <div class="filter-container">
       <el-button size="mini" class="return-button" @click="onReturnClick">返回主页</el-button>
-      <!-- <el-tag type="success">{{params.title}}</el-tag> -->
-      <!-- <el-tag type="success">{{params.city}}</el-tag> -->
+      <el-tag type="success">{{params.title}}</el-tag>
+      <el-tag type="success">起始数：{{params.offset}}</el-tag>
     </div>
     <div class="tooltip-container" v-if="total > 0">
       <el-button class="pause-button" @click="onPauseClick">{{'停止加载'}}</el-button>
@@ -248,6 +248,7 @@
       }
     },
     async mounted() {
+      console.log('GroupTopicResult, mounted.')
       const that = this
       await this.$store.dispatch(INIT_USRE_INFO_FROM_STORAGE)
 
@@ -265,7 +266,8 @@
       console.log('GroupPostResult, mounted, groupId:', groupId)
 
       if (groupId) {
-        let offset = 0
+        let offset = this.params.offset
+        this.tableData = []
         for (let j = 0; j < 20; ++j) {
           if (this.isPaused) {
             return
@@ -340,7 +342,12 @@
               name: authorOriginal.name,
               imageUrl: authorOriginal.avatar,
               gender: authorOriginal.gender,
-              url: authorOriginal.url
+              url: authorOriginal.url,
+              location: {
+                id: '',
+                name: '',
+                uid: ''
+              }
             }
             const topic: GroupTopic = {
               id: topicOriginal.id,

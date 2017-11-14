@@ -4,14 +4,12 @@
       <div class="type-container">
         <el-radio-group v-model="type">
           <el-radio-button label="groupUser">小组用户</el-radio-button>
-          <el-radio-button label="groupPost">小组话题</el-radio-button>
+          <el-radio-button label="groupTopic">小组话题</el-radio-button>
         </el-radio-group>
       </div>
       <div class="title-container">
         <el-input placeholder="请输入小组网址" v-model="title">
-          <el-select slot="prepend" class="title-type-select" v-model="type" placeholder="请选择">
-            <el-option label="小组" value="group"></el-option>
-          </el-select>
+          <template slot="prepend">小组网址</template>
         </el-input>
         <div class="title-tooltip">
           如：https://www.douban.com/group/zhengzhou/
@@ -28,10 +26,12 @@
                             <el-radio label="all">男女不限</el-radio>
                           </el-radio-group> -->
           <el-input class="filter-city" placeholder="城市" v-model="city">
+            <template slot="prepend">城市</template>
           </el-input>
         </div>
-        <div class="filter-content" v-show="type === 'groupPost'">
+        <div class="filter-content" v-show="type === 'groupTopic'">
           <el-input class="filter-offset" placeholder="查询起始数" v-model="offset">
+            <template slot="prepend">查询起始数</template>
           </el-input>
         </div>
       </div>
@@ -62,11 +62,10 @@
   export default Vue.extend({
     data() {
       return {
-        type: 'groupPost',
-        title: 'https://www.douban.com/group/mini150cm/',
-        sex: 'all',
+        type: 'groupUser',
+        title: '',
         city: '郑州',
-        offset: ''
+        offset: 0
       }
     },
     computed: {
@@ -87,15 +86,21 @@
     },
     methods: {
       onSearch() {
-        // router.push('/result')
+        if (!this.title) {
+          return
+        }
         const params: SearchParams = {
           title: this.title,
           city: this.city,
-          type: 'group'
+          type: this.type === 'groupTopic' ? 'groupTopic' : 'groupUser',
+          offset: this.offset
         }
         store.dispatch(SET_SEARCH_PARAMS, params).then(() => {
-          // router.push('/result')
-          router.push('/result/group-posts')
+          if (this.type === 'groupTopic') {
+            router.push('/result/group-topics')
+          } else {
+            router.push('/result')
+          }
         })
       }
     }
@@ -145,10 +150,6 @@
       .filter-content {
         display: flex;
         flex-direction: column;
-
-        .filter-city {
-          padding-top: 10px;
-        }
       }
     }
 
