@@ -1,17 +1,30 @@
-# douban-group-find-user
+# douban-group-search
 
-> An electron-vue project
+> 豆瓣小组用户搜索/分析工具
 
-#### Build Setup
+## 功能
+
+- 搜索小组成员（按城市过滤）
+
+- 遍历小组最近发帖（按城市/性别/昵称等过滤）
+
+## 演示
+
+小组成员中搜索某城市成员：
+
+![image](https://github.com/qidaizhe11/douban-group-search/blob/master/docs/img/group-user.gif)
+
+小组最近发帖中搜索某城市成员：
+
+![image](https://github.com/qidaizhe11/douban-group-search/blob/master/docs/img/group-topics.gif)
+
+## Build Setup
 
 ``` bash
 # install dependencies
 npm install
 
-npm i element-theme -g
-
 # serve with hot reload at localhost:9080
-npm run theme
 npm run dev
 
 # build electron application for production
@@ -20,12 +33,17 @@ npm run build
 # run unit & end-to-end tests
 npm test
 
-
 # lint all JS/Vue component files in `src/`
 npm run lint
 
 ```
 
----
+## 技术
 
-This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
+- Electron
+- Vue
+- electron-vue
+- Typescript
+- Element-UI
+- cheerio
+- axios
