@@ -419,7 +419,7 @@
             return user
           }
         }
-        return null
+        return user
       }
     }
   })
