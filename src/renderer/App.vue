@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
   // import Vue, { ComponentOptions } from 'vue'
   export default {
     name: 'douban-group-search'
