@@ -1,6 +1,6 @@
 {
   "name": "douban-group-search",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Panfeng <qidaizhe11@gmail.com>",
   "description": "An electron-vue project",
   "license": "MIT",
