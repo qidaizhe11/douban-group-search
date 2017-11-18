@@ -57,6 +57,7 @@
   "dependencies": {
     "axios": "^0.16.1",
     "cheerio": "^1.0.0-rc.2",
+    "electron-updater": "^2.16.1",
     "element-table-wrapper": "^2.0.2",
     "element-ui": "^2.0.5",
     "lodash": "^4.17.4",

@@ -5,10 +5,12 @@
 </template>
 
 <script lang="ts">
-  // import Vue, { ComponentOptions } from 'vue'
-  export default {
+  import Vue from 'vue'
+  // import router from 'router'
+
+  export default Vue.extend({
     name: 'douban-group-search'
-  }
+  })
 </script>
 
 <style lang="scss">

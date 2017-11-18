@@ -2,6 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import Element from 'element-ui'
 // import moment from 'moment'
+import { ipcRenderer } from 'electron'
 
 // import 'element-ui/lib/theme-chalk/index.css'
 
@@ -16,6 +17,16 @@ Vue.use(Element)
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
+
+ipcRenderer.on('index', () => {
+  router.push('/')
+})
+
+ipcRenderer.on('logout', () => {
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('refreshToken')
+  router.push('/login')
+})
 
 /* tslint:disable no-unused-expression */
 new Vue({
