@@ -77,18 +77,20 @@ let template = [
         label: '检查更新',
         key: 'checkForUpdate',
         click: function() {
-          autoUpdater.checkForUpdates()
+          // autoUpdater.checkForUpdates()
+          electron.shell.openExternal(
+            'https://github.com/qidaizhe11/douban-group-search/releases'
+          )
         }
       },
-      {
-        label: '重启并安装更新',
-        enabled: true,
-        key: 'restartToUpdate',
-        click: function() {
-          autoUpdater.quitAndInstall()
-        }
-      },
-
+      // {
+      //   label: '重启并安装更新',
+      //   enabled: true,
+      //   key: 'restartToUpdate',
+      //   click: function() {
+      //     autoUpdater.quitAndInstall()
+      //   }
+      // },
       {
         label: '关于',
         click: function() {
