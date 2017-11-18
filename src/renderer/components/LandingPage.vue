@@ -28,7 +28,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
   // import Vue, { ComponentOptions } from 'vue'
   
   export default {
