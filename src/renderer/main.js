@@ -3,7 +3,7 @@ import axios from 'axios'
 // import Element from 'element-ui'
 // import moment from 'moment'
 
-import 'element-ui/lib/theme-chalk/index.css'
+// import 'element-ui/lib/theme-chalk/index.css'
 
 import App from './App'
 import router from './router'
