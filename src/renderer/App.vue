@@ -14,8 +14,18 @@
 <style>
   /* CSS */
 
-  @import "~normalize.css";
+  @import '~normalize.css';
   /* @import "./style/theme/index.css"; */
+
+  button,
+  input,
+  optgroup,
+  select,
+  textarea {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      'Microsoft Yahei', 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+      'Segoe UI Emoji', 'Segoe UI Symbol';
+  }
 
   html,
   body {
@@ -26,7 +36,13 @@
   }
 
   body {
-    font: normal 1em/1.5em 'microsoft Yahei', Verdana, Arial, Helvetica, sans-serif;
+    /* font: normal 1em/1.5em 'microsoft Yahei', Verdana, Arial, Helvetica, sans-serif; */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      'Microsoft Yahei', 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+      'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
   }
 
   #app {
